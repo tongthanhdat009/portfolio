@@ -25,7 +25,7 @@ export const heroData: HeroData = {
     "SCROLL TO EXPLORE ↓"
   ],
   heroAccent: "sky",
-  featuredProjectId: "hyperflow-orchestrator",
+  featuredProjectId: "cua",
   featuredProjectEnabled: true,
 };
 
