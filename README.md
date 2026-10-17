@@ -3,7 +3,7 @@
 A high-performance developer portfolio built according to [`modern-neobrutal-dev-portfolio-spec.md`](./modern-neobrutal-dev-portfolio-spec.md).
 
 **Theme:** Clean Neo-Brutalism ("BUILD LOUD. THINK CLEAR.")  
-**Stack:** Next.js (App Router) · Tailwind CSS v4 · TypeScript · Headless CMS architecture
+**Stack:** Next.js (App Router) · Tailwind CSS v4 · TypeScript · Headless CMS & Local Admin Dashboard
 
 ---
 
@@ -13,8 +13,25 @@ A high-performance developer portfolio built according to [`modern-neobrutal-dev
 2. **Accessible Neo-Brutalism:** Pure hard shadows (`5px 5px 0 #111111`), tactile button press shifts (`2px 2px`), high-contrast ink on warm paper palette, and strict WCAG 2.2 AA compliance.
 3. **Capability-First Architecture:** Eliminates rigid job titles in favor of actionable engineering vectors: Web Products, Backend & APIs, Intelligent Workflows, Systems & Architecture, Developer Tools, and Lab Experiments.
 4. **Comprehensive Case Studies:** Deep dives into problem contexts, architectural trade-offs, engineering contributions, verified production metrics, and lessons learned.
-5. **Headless CMS & Content Adapter:** Fully decoupled data layer (`src/lib/cms/index.ts` and `src/content/`) allowing non-technical editors to update content, toggle sections, reorder projects, and configure announcements without touching layout code.
-6. **Zero-Overhead Static Generation:** All pages and dynamic routes pre-rendered with `generateStaticParams`.
+5. **Local Neo-Brutal Admin Dashboard (`/admin`):**
+   - Protected with Security PIN/Password authentication (`portfolio_admin_auth` cookie session).
+   - Real-time management interface to create, edit, and delete **Projects**, **Lab Experiments**, **Field Notes**, and the **Header Announcement**.
+   - One-click GitHub synchronization button directly on the dashboard.
+   - Live visual preview of components inside the admin panel.
+6. **Zero-Overhead Static Generation:** All public pages and dynamic routes pre-rendered with `generateStaticParams`.
+
+---
+
+## 🔐 Admin Console (`/admin`)
+
+Access the management dashboard at `/admin`.
+
+- **Default PIN:** `neo2026`
+- **Custom PIN configuration:** Set the `ADMIN_PIN` environment variable:
+  ```bash
+  # .env.local
+  ADMIN_PIN=your_custom_secure_pin_or_password
+  ```
 
 ---
 
@@ -34,6 +51,7 @@ src/
 ├── app/                  # Next.js App Router pages and metadata
 │   ├── layout.tsx        # Global shell: SkipLink, Announcement, Header, Footer
 │   ├── page.tsx          # Assembled 12-section homepage
+│   ├── admin/            # Local Admin Console (/admin) with Server Actions & PIN protection
 │   ├── work/             # All projects listing and [slug] case study details
 │   ├── lab/              # Digital laboratory listing and [slug] breakdown
 │   ├── notes/            # Field logs listing and [slug] reader with TOC
@@ -46,6 +64,7 @@ src/
 │   └── ui/               # Button (tactile press), Badge, Card, Icons
 ├── content/              # Content fixtures & schemas (siteSettings, homePage, projects, etc.)
 ├── lib/
+│   ├── admin/            # Auth session & PIN verification helpers
 │   ├── cms/              # CMS query and data normalization adapter
 │   └── validation/       # Schema validators for slugs and contact form
 ├── styles/               # globals.css with Tailwind v4 @theme design tokens
@@ -71,18 +90,7 @@ pnpm build
 
 # Start production server
 pnpm start
+
+# Sync GitHub repositories via CLI
+pnpm sync:github
 ```
-
----
-
-## 📝 Editor Guide (Updating Content)
-
-To update content without modifying React components:
-- **Hero & Manifesto:** Edit `src/content/homePage.ts`
-- **Announcement Strip:** Edit `src/content/announcements.ts`
-- **Site Metadata & Socials:** Edit `src/content/siteSettings.ts`
-- **Projects & Case Studies:** Add or edit items in `src/content/projects.ts`
-- **Engineering Tools:** Edit `src/content/technologies.ts`
-- **Timeline Milestones:** Edit `src/content/experience.ts`
-- **Lab Experiments:** Edit `src/content/experiments.ts`
-- **Field Notes:** Edit `src/content/notes.ts`

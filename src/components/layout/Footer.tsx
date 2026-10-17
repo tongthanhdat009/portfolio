@@ -49,6 +49,13 @@ export const Footer: React.FC<FooterProps> = ({ settings }) => {
               <Link href="/contact" className="hover:text-[#FFDB58] transition-colors">
                 Contact & Inquiries
               </Link>
+              <Link
+                href="/admin"
+                className="hover:text-[#C6F56A] transition-colors inline-flex items-center gap-1.5 opacity-60 hover:opacity-100 pt-1 font-mono text-xs"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-[#C6F56A]" />
+                <span>Admin Console</span>
+              </Link>
             </div>
           </div>
 
