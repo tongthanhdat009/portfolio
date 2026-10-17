@@ -29,7 +29,7 @@ Access the management dashboard at `/admin`.
 - **Default PIN:** `neo2026`
 - **Custom PIN configuration:** Set the `ADMIN_PIN` environment variable:
   ```bash
-  # .env.local
+  # .env.local (in frontend/ directory)
   ADMIN_PIN=your_custom_secure_pin_or_password
   ```
 
@@ -38,48 +38,60 @@ Access the management dashboard at `/admin`.
 ## 🛠️ Tech Stack & Architecture
 
 - **Framework:** Next.js 16 (App Router with Server Components default)
-- **Styling:** Tailwind CSS v4 with CSS-first design tokens (`src/styles/globals.css`)
+- **Styling:** Tailwind CSS v4 with CSS-first design tokens (`frontend/src/styles/globals.css`)
 - **Typography:** Space Grotesk (Display) · Manrope (Body) · IBM Plex Mono (Technical Meta) via `next/font/google`
 - **Icons:** Minimal line-art SVG icons and Lucide React (uniform 2–2.5px stroke)
 
 ---
 
-## 📂 Project Structure
+## 📁 Project Structure
 
 ```
-src/
-├── app/                  # Next.js App Router pages and metadata
-│   ├── layout.tsx        # Global shell: SkipLink, Announcement, Header, Footer
-│   ├── page.tsx          # Assembled 12-section homepage
-│   ├── admin/            # Local Admin Console (/admin) with Server Actions & PIN protection
-│   ├── work/             # All projects listing and [slug] case study details
-│   ├── lab/              # Digital laboratory listing and [slug] breakdown
-│   ├── notes/            # Field logs listing and [slug] reader with TOC
-│   ├── about/            # Extended background, principles & timeline
-│   ├── contact/          # Accessible inquiry form & copyable inbox
-│   └── not-found.tsx     # Neo-brutal 404 page
-├── components/
-│   ├── layout/           # Header, Footer, AnnouncementStrip, SkipLink
-│   ├── sections/         # Hero, Marquee, About, Capabilities, Work, Toolbox, Journey, Lab, Notes, Contact
-│   └── ui/               # Button (tactile press), Badge, Card, Icons
-├── content/              # Content fixtures & schemas (siteSettings, homePage, projects, etc.)
-├── lib/
-│   ├── admin/            # Auth session & PIN verification helpers
-│   ├── cms/              # CMS query and data normalization adapter
-│   └── validation/       # Schema validators for slugs and contact form
-├── styles/               # globals.css with Tailwind v4 @theme design tokens
-└── types/                # Complete TypeScript domain models
+portfolio/
+├── package.json              # Monorepo root scripts forwarder
+├── pnpm-workspace.yaml       # pnpm workspace configuration
+├── frontend/                 # Complete frontend Next.js application
+│   ├── package.json
+│   ├── next.config.mjs
+│   ├── tsconfig.json
+│   ├── postcss.config.mjs
+│   ├── scripts/              # Automation scripts (sync-github.mjs)
+│   ├── public/               # Static assets
+│   └── src/
+│       ├── app/              # Next.js App Router pages and metadata
+│       │   ├── layout.tsx    # Global shell: SkipLink, Announcement, Header, Footer
+│       │   ├── page.tsx      # Assembled 12-section homepage
+│       │   ├── admin/        # Local Admin Console (/admin) with Server Actions & PIN protection
+│       │   ├── work/         # All projects listing and [slug] case study details
+│       │   ├── lab/          # Digital laboratory listing and [slug] breakdown
+│       │   ├── notes/        # Field logs listing and [slug] reader with TOC
+│       │   ├── about/        # Extended background, principles & timeline
+│       │   ├── contact/      # Accessible inquiry form & copyable inbox
+│       │   └── not-found.tsx # Neo-brutal 404 page
+│       ├── components/
+│       │   ├── layout/       # Header, Footer, AnnouncementStrip, SkipLink
+│       │   ├── sections/     # Hero, Marquee, About, Capabilities, Work, Toolbox, Journey, Lab, Notes, Contact
+│       │   └── ui/           # Button (tactile press), Badge, Card, Icons
+│       ├── content/          # Content fixtures & schemas (siteSettings, homePage, projects, etc.)
+│       ├── lib/
+│       │   ├── admin/        # Auth session & PIN verification helpers
+│       │   ├── cms/          # CMS query and data normalization adapter
+│       │   └── validation/   # Schema validators for slugs and contact form
+│       ├── styles/           # globals.css with Tailwind v4 @theme design tokens
+│       └── types/            # Complete TypeScript domain models
 ```
 
 ---
 
 ## 💻 Development & Build
 
+Commands can be run from the root directory or inside `frontend/`:
+
 ```bash
-# Install dependencies
+# Install all dependencies
 pnpm install
 
-# Start local development server
+# Start local development server (runs Next.js in frontend/)
 pnpm dev
 
 # Check TypeScript types

@@ -21,10 +21,13 @@ import {
 
 const execAsync = promisify(exec);
 
-const ANNOUNCEMENT_FILE = path.resolve(process.cwd(), 'src/content/announcements.ts');
-const PROJECTS_FILE = path.resolve(process.cwd(), 'src/content/projects.ts');
-const EXPERIMENTS_FILE = path.resolve(process.cwd(), 'src/content/experiments.ts');
-const NOTES_FILE = path.resolve(process.cwd(), 'src/content/notes.ts');
+function getContentFilePath(fileName: string): string {
+  const localCandidate = path.resolve(process.cwd(), 'src/content', fileName);
+  if (fs.existsSync(localCandidate)) {
+    return localCandidate;
+  }
+  return path.resolve(process.cwd(), 'frontend/src/content', fileName);
+}
 
 export async function loginAction(pin: string): Promise<{ success: boolean; error?: string }> {
   const isValid = await verifyAdminPassword(pin);
@@ -52,7 +55,7 @@ export async function saveAnnouncementAction(data: Announcement): Promise<{ succ
       null,
       2
     )};\n`;
-    fs.writeFileSync(ANNOUNCEMENT_FILE, content, 'utf-8');
+    fs.writeFileSync(getContentFilePath('announcements.ts'), content, 'utf-8');
     revalidatePath('/');
     revalidatePath('/admin');
     return { success: true };
@@ -89,7 +92,7 @@ export async function saveProjectAction(
       null,
       2
     )};\n`;
-    fs.writeFileSync(PROJECTS_FILE, content, 'utf-8');
+    fs.writeFileSync(getContentFilePath('projects.ts'), content, 'utf-8');
     revalidatePath('/');
     revalidatePath('/work');
     revalidatePath(`/work/${project.slug}`);
@@ -113,7 +116,7 @@ export async function deleteProjectAction(slug: string): Promise<{ success: bool
       null,
       2
     )};\n`;
-    fs.writeFileSync(PROJECTS_FILE, content, 'utf-8');
+    fs.writeFileSync(getContentFilePath('projects.ts'), content, 'utf-8');
     revalidatePath('/');
     revalidatePath('/work');
     revalidatePath('/admin');
@@ -149,7 +152,7 @@ export async function saveExperimentAction(
       null,
       2
     )};\n`;
-    fs.writeFileSync(EXPERIMENTS_FILE, content, 'utf-8');
+    fs.writeFileSync(getContentFilePath('experiments.ts'), content, 'utf-8');
     revalidatePath('/');
     revalidatePath('/lab');
     revalidatePath(`/lab/${experiment.slug}`);
@@ -173,7 +176,7 @@ export async function deleteExperimentAction(slug: string): Promise<{ success: b
       null,
       2
     )};\n`;
-    fs.writeFileSync(EXPERIMENTS_FILE, content, 'utf-8');
+    fs.writeFileSync(getContentFilePath('experiments.ts'), content, 'utf-8');
     revalidatePath('/');
     revalidatePath('/lab');
     revalidatePath('/admin');
@@ -209,7 +212,7 @@ export async function saveNoteAction(
       null,
       2
     )};\n`;
-    fs.writeFileSync(NOTES_FILE, content, 'utf-8');
+    fs.writeFileSync(getContentFilePath('notes.ts'), content, 'utf-8');
     revalidatePath('/');
     revalidatePath('/notes');
     revalidatePath(`/notes/${note.slug}`);
@@ -233,7 +236,7 @@ export async function deleteNoteAction(slug: string): Promise<{ success: boolean
       null,
       2
     )};\n`;
-    fs.writeFileSync(NOTES_FILE, content, 'utf-8');
+    fs.writeFileSync(getContentFilePath('notes.ts'), content, 'utf-8');
     revalidatePath('/');
     revalidatePath('/notes');
     revalidatePath('/admin');
@@ -249,7 +252,12 @@ export async function triggerGithubSyncAction(): Promise<{ success: boolean; mes
   }
 
   try {
-    const { stdout, stderr } = await execAsync('node scripts/sync-github.mjs');
+    const scriptCandidate1 = path.resolve(process.cwd(), 'scripts/sync-github.mjs');
+    const scriptCandidate2 = path.resolve(process.cwd(), 'frontend/scripts/sync-github.mjs');
+    const scriptPath = fs.existsSync(scriptCandidate1) ? scriptCandidate1 : scriptCandidate2;
+    const workingDir = path.dirname(path.dirname(scriptPath));
+
+    const { stdout, stderr } = await execAsync(`node "${scriptPath}"`, { cwd: workingDir });
     revalidatePath('/');
     revalidatePath('/work');
     revalidatePath('/admin');

@@ -1,10 +1,15 @@
 import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const FRONTEND_ROOT = path.resolve(__dirname, '..');
 
 const REPO_OWNER = 'tongthanhdat009';
-const PROJECTS_FILE = path.resolve(process.cwd(), 'src/content/projects.ts');
-const HOMEPAGE_FILE = path.resolve(process.cwd(), 'src/content/homePage.ts');
+const PROJECTS_FILE = path.resolve(FRONTEND_ROOT, 'src/content/projects.ts');
+const HOMEPAGE_FILE = path.resolve(FRONTEND_ROOT, 'src/content/homePage.ts');
 
 function getCategoryByRepo(repo) {
   const name = repo.name.toLowerCase();
