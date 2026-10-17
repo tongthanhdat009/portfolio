@@ -4,9 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "pnpm -C frontend dev",
+    "dev:admin": "pnpm -C frontend-admin dev",
     "build": "pnpm -C frontend build",
+    "build:admin": "pnpm -C frontend-admin build",
     "start": "pnpm -C frontend start",
-    "typecheck": "pnpm -C frontend typecheck",
+    "start:admin": "pnpm -C frontend-admin start",
+    "typecheck": "pnpm -C frontend typecheck && pnpm -C frontend-admin typecheck",
     "sync:github": "pnpm -C frontend sync:github"
   }
 }

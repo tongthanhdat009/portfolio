@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #111111;
+  --color-paper: #FFF9E9;
+  --color-surface: #FFFFFF;
+  --color-sun: #FFDB58;
+  --color-sky: #89CFF0;
+  --color-coral: #FF7661;
+  --color-lime: #C6F56A;
+  --color-pink: #F9A8D4;
+  --color-warm-line: #E9DFC9;
+  --color-muted-text: #5B5751;
+  --color-focus: #0A54E8;
+  --color-negative: #B42318;
+  --color-positive: #176B3A;
+
+  --shadow-neo-sm: 2px 2px 0 #111111;
+  --shadow-neo-md: 4px 4px 0 #111111;
+  --shadow-neo-lg: 6px 6px 0 #111111;
+  --shadow-neo-xl: 10px 10px 0 #111111;
+  --shadow-neo-active: 1px 1px 0 #111111;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  --font-display: "Space Grotesk", system-ui, -apple-system, sans-serif;
+  --font-body: "Manrope", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", Menlo, Monaco, Consolas, monospace;
+}
+
+:root {
+  --bg-paper: #FFF9E9;
+  --text-ink: #111111;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-paper);
+  color: var(--text-ink);
+  font-family: var(--font-body);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Custom scrollbars for clean Neo-Brutalist look */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #FFF9E9;
+  border-left: 2px solid #111111;
+}
+::-webkit-scrollbar-thumb {
+  background: #111111;
+  border: 1px solid #111111;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #FFDB58;
+}

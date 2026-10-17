@@ -1,0 +1,1998 @@
+{
+  "cms_entries": [
+    {
+      "_id": "entry_page_home",
+      "type": "page",
+      "key": "home",
+      "slug": "",
+      "locale": "en",
+      "title": "Homepage",
+      "status": "published",
+      "revision": 3,
+      "lastPublishedRevision": 3,
+      "hasUnpublishedChanges": false,
+      "sortOrder": 1,
+      "featured": true,
+      "references": [
+        "proj_1",
+        "proj_2",
+        "med_avatar"
+      ],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "updatedBy": "owner",
+      "seo": {
+        "title": "Dat Nguyen — Modern Neo-Brutal Developer Portfolio",
+        "description": "Software Engineer, Systems Thinker & Digital Craftsman."
+      },
+      "data": {
+        "sections": [
+          {
+            "id": "sec_announcement",
+            "type": "announcement",
+            "name": "Announcement Strip",
+            "enabled": true,
+            "order": 1,
+            "props": {
+              "label": "STATUS",
+              "message": "Available for Q4 contracts & architectural advisory.",
+              "linkUrl": "/contact"
+            }
+          },
+          {
+            "id": "sec_hero",
+            "type": "hero_poster",
+            "name": "Hero Poster",
+            "enabled": true,
+            "order": 2,
+            "props": {
+              "eyebrow": "PORTFOLIO / 2026",
+              "headlineLines": [
+                "FULL-STACK",
+                "SYSTEMS &",
+                "AI BUILDER"
+              ],
+              "intro": "Architecting resilient backend pipelines, performant web platforms, and machine intelligence workflows with unapologetic craft.",
+              "primaryCta": {
+                "label": "EXPLORE CASE STUDIES →",
+                "href": "/work"
+              },
+              "secondaryCta": {
+                "label": "DOWNLOAD CV",
+                "href": "/resume.pdf"
+              },
+              "statusLabel": "SYSTEMS ONLINE",
+              "heroAccent": "sun",
+              "featuredProjectId": "proj_1",
+              "featuredProjectEnabled": true
+            }
+          },
+          {
+            "id": "sec_marquee",
+            "type": "marquee",
+            "name": "Capability Marquee",
+            "enabled": true,
+            "order": 3,
+            "props": {
+              "keywords": [
+                "Distributed Systems",
+                "Next.js 16",
+                "TypeScript",
+                "Tailwind v4",
+                "PostgreSQL",
+                "High Concurrency",
+                "Vector Search",
+                "Event Driven"
+              ],
+              "speedPreset": "normal"
+            }
+          },
+          {
+            "id": "sec_about",
+            "type": "about_manifesto",
+            "name": "About Manifesto",
+            "enabled": true,
+            "order": 4,
+            "props": {
+              "sectionLabel": "THE PHILOSOPHY",
+              "headline": "NO FLUFF. DETERMINISTIC CODE. RELIABLE ARCHITECTURE.",
+              "body": "I build software that does what it says on the tin. Over 7 years delivering mission-critical applications across fintech, logistics, and AI infrastructure.",
+              "chips": [
+                "Pragmatic Engineering",
+                "Zero Over-engineering",
+                "High Signal-to-Noise",
+                "Measurable ROI"
+              ],
+              "ctaText": "READ FULL STORY →",
+              "ctaHref": "/about"
+            }
+          },
+          {
+            "id": "sec_capabilities",
+            "type": "capability_grid",
+            "name": "Capabilities Board (What I Build)",
+            "enabled": true,
+            "order": 5,
+            "props": {
+              "displayCount": 6
+            }
+          },
+          {
+            "id": "sec_featured_work",
+            "type": "featured_work",
+            "name": "Featured Work Wall",
+            "enabled": true,
+            "order": 6,
+            "props": {
+              "mode": "curated",
+              "selectedProjectIds": [
+                "proj_1",
+                "proj_2"
+              ]
+            }
+          },
+          {
+            "id": "sec_toolbox",
+            "type": "toolbox",
+            "name": "Toolbox / Skills",
+            "enabled": true,
+            "order": 7,
+            "props": {
+              "selectedCategories": [
+                "Languages",
+                "Frontend",
+                "Backend",
+                "Data",
+                "AI",
+                "Tools"
+              ]
+            }
+          },
+          {
+            "id": "sec_journey",
+            "type": "journey",
+            "name": "Journey & Experience",
+            "enabled": true,
+            "order": 8,
+            "props": {
+              "maxItems": 5
+            }
+          },
+          {
+            "id": "sec_lab",
+            "type": "experiment_grid",
+            "name": "Lab & Prototypes",
+            "enabled": true,
+            "order": 9,
+            "props": {
+              "maxItems": 4
+            }
+          },
+          {
+            "id": "sec_notes",
+            "type": "notes_grid",
+            "name": "Technical Notes",
+            "enabled": true,
+            "order": 10,
+            "props": {
+              "maxItems": 4
+            }
+          },
+          {
+            "id": "sec_contact",
+            "type": "contact_poster",
+            "name": "Contact Poster",
+            "enabled": true,
+            "order": 11,
+            "props": {
+              "eyebrow": "INITIATE CONTACT",
+              "headline": "LET'S BUILD SOMETHING DEFIANT.",
+              "message": "Whether you need end-to-end system design, high-performance web engineering, or technical leadership, let us connect.",
+              "primaryCta": {
+                "label": "SEND MESSAGE ↗",
+                "href": "mailto:contact@datnguyen.dev"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "_id": "proj_1",
+      "type": "project",
+      "slug": "aerosync-cloud",
+      "locale": "en",
+      "title": "AeroSync Cloud",
+      "status": "published",
+      "featured": true,
+      "sortOrder": 1,
+      "revision": 4,
+      "lastPublishedRevision": 4,
+      "hasUnpublishedChanges": false,
+      "references": [
+        "med_aerosync"
+      ],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "updatedBy": "owner",
+      "seo": {
+        "title": "AeroSync Cloud — Distributed Event Processing Engine",
+        "description": "Scalable cloud synchronization and ingestion service handling 100k events/sec."
+      },
+      "data": {
+        "title": "AeroSync Cloud",
+        "slug": "aerosync-cloud",
+        "year": "2025",
+        "index": "01",
+        "category": "Backend & APIs",
+        "summary": "High-throughput real-time telemetry streaming and state sync engine handling 120,000 events/second with sub-10ms latency.",
+        "accent": "sun",
+        "tags": [
+          "Distributed Systems",
+          "Go",
+          "Kafka",
+          "Redis Cluster",
+          "Kubernetes"
+        ],
+        "status": "Shipped",
+        "featured": true,
+        "demoUrl": "https://demo.aerosync.io",
+        "repoUrl": "https://github.com/datnguyen/aerosync",
+        "coverImage": "/images/aerosync.png",
+        "caseStudy": {
+          "overview": {
+            "product": "AeroSync Cloud Engine",
+            "targetUsers": "Autonomous drone fleets & IoT operational dispatchers",
+            "timeline": "6 months",
+            "role": "Lead Distributed Systems Architect",
+            "status": "In Production"
+          },
+          "problem": "Legacy message queues suffered from unbounded head-of-line blocking and memory spikes during intermittent network drops.",
+          "contribution": [
+            "Architected custom zero-allocation binary protocol over WebSockets with multiplexed bidirectional frames.",
+            "Implemented Raft-based distributed coordinator for partition rebalancing without dropped frames.",
+            "Engineered backpressure and sliding-window rate limiters reducing p99 latency by 72%."
+          ],
+          "approach": {
+            "summary": "Event-driven partitioning with local memory caches backed by RocksDB and persistent Kafka streams.",
+            "architecturePoints": [
+              "Zero-copy ingestion pipelines via Go sync.Pool allocations",
+              "Consistent hashing ring across 12 worker nodes",
+              "Prometheus instrumentation with automated anomaly alerting"
+            ]
+          },
+          "highlights": [
+            "120,000 events/sec sustained load in production",
+            "Sub-10ms p99 latency across cross-regional nodes",
+            "99.995% uptime over 12 consecutive months"
+          ],
+          "outcomes": [
+            "Reduced server infrastructure footprint by 40%",
+            "Eliminated data loss during transient cellular disconnections"
+          ],
+          "lessons": [
+            "Prioritize deterministic memory reclamation early in Go high-throughput services.",
+            "Strict schema validation at ingress pays compound dividends down the line."
+          ]
+        }
+      }
+    },
+    {
+      "_id": "proj_2",
+      "type": "project",
+      "slug": "hypervibe-dsp",
+      "locale": "en",
+      "title": "HyperVibe DSP",
+      "status": "published",
+      "featured": true,
+      "sortOrder": 2,
+      "revision": 2,
+      "lastPublishedRevision": 2,
+      "hasUnpublishedChanges": false,
+      "references": [
+        "med_hypervibe"
+      ],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "updatedBy": "owner",
+      "seo": {
+        "title": "HyperVibe DSP — In-browser Audio Synthesis Platform",
+        "description": "WebAudio and WebAssembly real-time digital signal processing workstation."
+      },
+      "data": {
+        "title": "HyperVibe DSP",
+        "slug": "hypervibe-dsp",
+        "year": "2025",
+        "index": "02",
+        "category": "Web Products",
+        "summary": "Hardware-accelerated web-based modular synthesizer and digital signal processor running at 60fps with WebAssembly.",
+        "accent": "sky",
+        "tags": [
+          "WebAssembly",
+          "Rust",
+          "WebAudio API",
+          "React 19",
+          "Canvas 2D"
+        ],
+        "status": "In Production",
+        "featured": true,
+        "demoUrl": "https://hypervibe.studio",
+        "repoUrl": "https://github.com/datnguyen/hypervibe",
+        "coverImage": "/images/hypervibe.png",
+        "caseStudy": {
+          "overview": {
+            "product": "HyperVibe Modular Audio Studio",
+            "targetUsers": "Sound designers, electronic music producers, and game audio engineers",
+            "timeline": "4 months",
+            "role": "Solo Creator & Audio Programmer",
+            "status": "Live"
+          },
+          "problem": "Standard browser audio synthesis introduces phase distortion and GC pauses that break audio buffer continuity.",
+          "contribution": [
+            "Compiled high-performance C++ and Rust audio DSP algorithms to WebAssembly via AudioWorklet.",
+            "Built custom canvas wave renderer rendering 60fps oscilloscope without triggering React re-renders.",
+            "Implemented patch cable node graph routing system with cycle detection."
+          ],
+          "approach": {
+            "summary": "Decoupled audio processing thread from main UI thread via SharedArrayBuffer ring buffers.",
+            "architecturePoints": [
+              "Custom AudioWorkletProcessor executing in dedicated audio thread",
+              "Lock-free ring buffers for atomic parameter modulation",
+              "SVG + Canvas hybrid rendering for tactile patch cabling"
+            ]
+          },
+          "highlights": [
+            "Zero audio buffer underruns during heavy UI interactions",
+            "Over 15,000 monthly active audio experimenters"
+          ],
+          "outcomes": [
+            "Featured in WebAudio weekly and hacker communities"
+          ],
+          "lessons": [
+            "Keep memory allocation completely out of the audio rendering loop."
+          ]
+        }
+      }
+    },
+    {
+      "_id": "proj_3",
+      "type": "project",
+      "slug": "omnigraph-ai",
+      "locale": "en",
+      "title": "OmniGraph AI",
+      "status": "draft",
+      "featured": false,
+      "sortOrder": 3,
+      "revision": 1,
+      "lastPublishedRevision": 0,
+      "hasUnpublishedChanges": true,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "updatedBy": "owner",
+      "seo": {
+        "title": "OmniGraph AI — Autonomous Knowledge Graph Extraction",
+        "description": "Multi-agent LLM pipeline converting raw enterprise docs into typed graph databases."
+      },
+      "data": {
+        "title": "OmniGraph AI",
+        "slug": "omnigraph-ai",
+        "year": "2026",
+        "index": "03",
+        "category": "Intelligent Workflows",
+        "summary": "Multi-agent pipeline that transforms unstructured technical manuals into verified Neo4j knowledge graphs.",
+        "accent": "coral",
+        "tags": [
+          "FastAPI",
+          "Python",
+          "Neo4j",
+          "LangChain",
+          "vLLM"
+        ],
+        "status": "Prototype",
+        "featured": false,
+        "demoUrl": "",
+        "repoUrl": "https://github.com/datnguyen/omnigraph",
+        "coverImage": "",
+        "caseStudy": {
+          "overview": {
+            "product": "OmniGraph Extraction Agent",
+            "targetUsers": "Compliance analysts and technical researchers",
+            "timeline": "3 months",
+            "role": "AI Engineer & System Designer",
+            "status": "Prototype"
+          },
+          "problem": "Manual entity extraction from 1,000+ page aerospace engineering manuals takes hundreds of human hours.",
+          "contribution": [
+            "Constructed hierarchical chunking and semantic schema validation step.",
+            "Implemented self-correcting cypher queries against knowledge graph."
+          ],
+          "approach": {
+            "summary": "Two-stage LLM extraction with deterministic schema constraint enforcement.",
+            "architecturePoints": [
+              "Chunking with semantic boundary preservation",
+              "Pydantic-enforced entity validation",
+              "Vector + BM25 hybrid retrieval fallback"
+            ]
+          },
+          "highlights": [
+            "91% entity extraction accuracy on benchmark PDFs"
+          ],
+          "outcomes": [
+            "Proof-of-concept ready for staging evaluation"
+          ],
+          "lessons": [
+            "Always validate LLM graph outputs with rigid structural types."
+          ]
+        }
+      }
+    },
+    {
+      "_id": "proj_4",
+      "type": "project",
+      "slug": "kubewatch-edge",
+      "locale": "en",
+      "title": "KubeWatch Edge",
+      "status": "published",
+      "featured": false,
+      "sortOrder": 4,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "updatedBy": "owner",
+      "seo": {
+        "title": "KubeWatch Edge — Lightweight Cluster Daemon",
+        "description": "Minimalist eBPF-powered network metrics daemon for edge nodes."
+      },
+      "data": {
+        "title": "KubeWatch Edge",
+        "slug": "kubewatch-edge",
+        "year": "2024",
+        "index": "04",
+        "category": "Systems & Architecture",
+        "summary": "Minimalist daemon extracting packet drops and latency spikes from Linux kernels using eBPF.",
+        "accent": "lime",
+        "tags": [
+          "Linux Kernel",
+          "eBPF",
+          "C",
+          "Go",
+          "Prometheus"
+        ],
+        "status": "Open Source",
+        "featured": false,
+        "demoUrl": "",
+        "repoUrl": "https://github.com/datnguyen/kubewatch-edge",
+        "coverImage": "",
+        "caseStudy": {
+          "overview": {
+            "product": "KubeWatch Edge Daemon",
+            "targetUsers": "Site Reliability Engineers & Platform Architects",
+            "timeline": "2 months",
+            "role": "Systems Programmer",
+            "status": "Open Source"
+          },
+          "problem": "Traditional sidecar proxy monitors consume too much CPU on memory-constrained edge hardware.",
+          "contribution": [
+            "Wrote eBPF kprobes directly monitoring TCP socket retransmissions.",
+            "Exposed lightweight Prometheus scraper endpoint."
+          ],
+          "approach": {
+            "summary": "In-kernel packet monitoring without user-space context switches.",
+            "architecturePoints": [
+              "Kernel probe attaches to tcp_drop and tcp_retransmit_skb",
+              "Ring buffer maps for zero-allocation telemetry transport"
+            ]
+          },
+          "highlights": [
+            "Under 8MB RAM footprint in steady state"
+          ],
+          "outcomes": [
+            "Over 1,200 GitHub stars and adopted by edge computing hobbyists"
+          ],
+          "lessons": [
+            "eBPF verifier restrictions require extremely disciplined data layout."
+          ]
+        }
+      }
+    },
+    {
+      "_id": "cap_01",
+      "type": "capability",
+      "slug": "capability-01",
+      "locale": "en",
+      "title": "Web Products",
+      "status": "published",
+      "sortOrder": 1,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "code": "01",
+        "title": "Web Products",
+        "description": "End-to-end web applications with tactile Neo-Brutal interfaces, zero hydration lag, and accessible design.",
+        "accent": "sun",
+        "iconKey": "layout",
+        "order": 1
+      }
+    },
+    {
+      "_id": "cap_02",
+      "type": "capability",
+      "slug": "capability-02",
+      "locale": "en",
+      "title": "Backend & APIs",
+      "status": "published",
+      "sortOrder": 2,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "code": "02",
+        "title": "Backend & APIs",
+        "description": "Microservices, REST & gRPC architectures, high-concurrency event buses, and resilient database layers.",
+        "accent": "sky",
+        "iconKey": "server",
+        "order": 2
+      }
+    },
+    {
+      "_id": "cap_03",
+      "type": "capability",
+      "slug": "capability-03",
+      "locale": "en",
+      "title": "Intelligent Workflows",
+      "status": "published",
+      "sortOrder": 3,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "code": "03",
+        "title": "Intelligent Workflows",
+        "description": "Multi-agent LLM systems, deterministic tool use, semantic search, and robust RAG pipelines.",
+        "accent": "coral",
+        "iconKey": "cpu",
+        "order": 3
+      }
+    },
+    {
+      "_id": "cap_04",
+      "type": "capability",
+      "slug": "capability-04",
+      "locale": "en",
+      "title": "Systems & Architecture",
+      "status": "published",
+      "sortOrder": 4,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "code": "04",
+        "title": "Systems & Architecture",
+        "description": "Distributed systems, database tuning, network protocols, eBPF telemetry, and container orchestration.",
+        "accent": "lime",
+        "iconKey": "shield",
+        "order": 4
+      }
+    },
+    {
+      "_id": "cap_05",
+      "type": "capability",
+      "slug": "capability-05",
+      "locale": "en",
+      "title": "Developer Tools",
+      "status": "published",
+      "sortOrder": 5,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "code": "05",
+        "title": "Developer Tools",
+        "description": "CLI utilities, automated CI/CD workflows, developer platforms, and code-generation pipelines.",
+        "accent": "pink",
+        "iconKey": "terminal",
+        "order": 5
+      }
+    },
+    {
+      "_id": "cap_06",
+      "type": "capability",
+      "slug": "capability-06",
+      "locale": "en",
+      "title": "Experiments & Prototypes",
+      "status": "published",
+      "sortOrder": 6,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "code": "06",
+        "title": "Experiments & Prototypes",
+        "description": "Fast validation of novel ideas, WebAssembly graphics, physics canvases, and experimental protocols.",
+        "accent": "paper",
+        "iconKey": "flask",
+        "order": 6
+      }
+    },
+    {
+      "_id": "tech_1",
+      "type": "skill",
+      "locale": "en",
+      "title": "TypeScript",
+      "status": "published",
+      "sortOrder": 1,
+      "featured": true,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "name": "TypeScript",
+        "category": "Languages",
+        "featured": true,
+        "order": 1,
+        "context": "Primary language for full-stack platforms"
+      }
+    },
+    {
+      "_id": "tech_2",
+      "type": "skill",
+      "locale": "en",
+      "title": "Go",
+      "status": "published",
+      "sortOrder": 2,
+      "featured": true,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "name": "Go",
+        "category": "Languages",
+        "featured": true,
+        "order": 2,
+        "context": "High-throughput microservices & network daemons"
+      }
+    },
+    {
+      "_id": "tech_3",
+      "type": "skill",
+      "locale": "en",
+      "title": "Python",
+      "status": "published",
+      "sortOrder": 3,
+      "featured": true,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "name": "Python",
+        "category": "Languages",
+        "featured": true,
+        "order": 3,
+        "context": "AI tooling, data pipelines & scientific prototypes"
+      }
+    },
+    {
+      "_id": "tech_4",
+      "type": "skill",
+      "locale": "en",
+      "title": "SQL",
+      "status": "published",
+      "sortOrder": 4,
+      "featured": true,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "name": "SQL",
+        "category": "Languages",
+        "featured": true,
+        "order": 4,
+        "context": "Relational query optimization & schema design"
+      }
+    },
+    {
+      "_id": "tech_5",
+      "type": "skill",
+      "locale": "en",
+      "title": "Rust",
+      "status": "published",
+      "sortOrder": 5,
+      "featured": false,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "name": "Rust",
+        "category": "Languages",
+        "featured": false,
+        "order": 5,
+        "context": "Wasm modules and low-latency algorithms"
+      }
+    },
+    {
+      "_id": "tech_6",
+      "type": "skill",
+      "locale": "en",
+      "title": "React 19",
+      "status": "published",
+      "sortOrder": 1,
+      "featured": true,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "name": "React 19",
+        "category": "Frontend",
+        "featured": true,
+        "order": 1,
+        "context": "Modern server components and optimistic UI"
+      }
+    },
+    {
+      "_id": "tech_7",
+      "type": "skill",
+      "locale": "en",
+      "title": "Next.js 16",
+      "status": "published",
+      "sortOrder": 2,
+      "featured": true,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "name": "Next.js 16",
+        "category": "Frontend",
+        "featured": true,
+        "order": 2,
+        "context": "App Router, caching layers & API routes"
+      }
+    },
+    {
+      "_id": "tech_8",
+      "type": "skill",
+      "locale": "en",
+      "title": "Tailwind CSS v4",
+      "status": "published",
+      "sortOrder": 3,
+      "featured": true,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "name": "Tailwind CSS v4",
+        "category": "Frontend",
+        "featured": true,
+        "order": 3,
+        "context": "Declarative tokens and tactile layouts"
+      }
+    },
+    {
+      "_id": "tech_9",
+      "type": "skill",
+      "locale": "en",
+      "title": "WebSockets",
+      "status": "published",
+      "sortOrder": 4,
+      "featured": false,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "name": "WebSockets",
+        "category": "Frontend",
+        "featured": false,
+        "order": 4,
+        "context": "Bidirectional state sync"
+      }
+    },
+    {
+      "_id": "tech_10",
+      "type": "skill",
+      "locale": "en",
+      "title": "Node.js",
+      "status": "published",
+      "sortOrder": 1,
+      "featured": true,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "name": "Node.js",
+        "category": "Backend",
+        "featured": true,
+        "order": 1,
+        "context": "Event-driven API endpoints"
+      }
+    },
+    {
+      "_id": "tech_11",
+      "type": "skill",
+      "locale": "en",
+      "title": "FastAPI",
+      "status": "published",
+      "sortOrder": 2,
+      "featured": true,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "name": "FastAPI",
+        "category": "Backend",
+        "featured": true,
+        "order": 2,
+        "context": "High performance async Python APIs"
+      }
+    },
+    {
+      "_id": "tech_12",
+      "type": "skill",
+      "locale": "en",
+      "title": "gRPC",
+      "status": "published",
+      "sortOrder": 3,
+      "featured": false,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "name": "gRPC",
+        "category": "Backend",
+        "featured": false,
+        "order": 3,
+        "context": "Typed inter-service communication"
+      }
+    },
+    {
+      "_id": "tech_13",
+      "type": "skill",
+      "locale": "en",
+      "title": "PostgreSQL",
+      "status": "published",
+      "sortOrder": 1,
+      "featured": true,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "name": "PostgreSQL",
+        "category": "Data",
+        "featured": true,
+        "order": 1,
+        "context": "ACID storage, indexing & JSONB"
+      }
+    },
+    {
+      "_id": "tech_14",
+      "type": "skill",
+      "locale": "en",
+      "title": "MongoDB",
+      "status": "published",
+      "sortOrder": 2,
+      "featured": true,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "name": "MongoDB",
+        "category": "Data",
+        "featured": true,
+        "order": 2,
+        "context": "Flexible document CMS storage"
+      }
+    },
+    {
+      "_id": "tech_15",
+      "type": "skill",
+      "locale": "en",
+      "title": "Redis",
+      "status": "published",
+      "sortOrder": 3,
+      "featured": true,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "name": "Redis",
+        "category": "Data",
+        "featured": true,
+        "order": 3,
+        "context": "Distributed caching & Pub/Sub"
+      }
+    },
+    {
+      "_id": "tech_16",
+      "type": "skill",
+      "locale": "en",
+      "title": "Kafka",
+      "status": "published",
+      "sortOrder": 4,
+      "featured": false,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "name": "Kafka",
+        "category": "Data",
+        "featured": false,
+        "order": 4,
+        "context": "High volume message streaming"
+      }
+    },
+    {
+      "_id": "tech_17",
+      "type": "skill",
+      "locale": "en",
+      "title": "LangChain",
+      "status": "published",
+      "sortOrder": 1,
+      "featured": true,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "name": "LangChain",
+        "category": "AI",
+        "featured": true,
+        "order": 1,
+        "context": "Structured agentic workflows"
+      }
+    },
+    {
+      "_id": "tech_18",
+      "type": "skill",
+      "locale": "en",
+      "title": "vLLM",
+      "status": "published",
+      "sortOrder": 2,
+      "featured": true,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "name": "vLLM",
+        "category": "AI",
+        "featured": true,
+        "order": 2,
+        "context": "Self-hosted LLM inference engines"
+      }
+    },
+    {
+      "_id": "tech_19",
+      "type": "skill",
+      "locale": "en",
+      "title": "Vector DBs",
+      "status": "published",
+      "sortOrder": 3,
+      "featured": false,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "name": "Vector DBs",
+        "category": "AI",
+        "featured": false,
+        "order": 3,
+        "context": "Qdrant & pgvector embeddings"
+      }
+    },
+    {
+      "_id": "tech_20",
+      "type": "skill",
+      "locale": "en",
+      "title": "Docker",
+      "status": "published",
+      "sortOrder": 1,
+      "featured": true,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "name": "Docker",
+        "category": "Tools",
+        "featured": true,
+        "order": 1,
+        "context": "Reproducible containerization"
+      }
+    },
+    {
+      "_id": "tech_21",
+      "type": "skill",
+      "locale": "en",
+      "title": "Kubernetes",
+      "status": "published",
+      "sortOrder": 2,
+      "featured": true,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "name": "Kubernetes",
+        "category": "Tools",
+        "featured": true,
+        "order": 2,
+        "context": "Production cluster management"
+      }
+    },
+    {
+      "_id": "tech_22",
+      "type": "skill",
+      "locale": "en",
+      "title": "Linux",
+      "status": "published",
+      "sortOrder": 3,
+      "featured": true,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "name": "Linux",
+        "category": "Tools",
+        "featured": true,
+        "order": 3,
+        "context": "Kernel tuning, systemd & bash automation"
+      }
+    },
+    {
+      "_id": "exp_1",
+      "type": "experience",
+      "locale": "en",
+      "title": "Principal Systems Engineer @ Vanguard Systems Lab",
+      "status": "published",
+      "sortOrder": 2,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "year": "2024 — Present",
+        "startDate": "2024-01",
+        "endDate": "Present",
+        "isCurrent": true,
+        "type": "Work",
+        "organization": "Vanguard Systems Lab",
+        "roleAtTime": "Principal Systems Engineer",
+        "description": "Heading cloud infrastructure architecture, distributed data ingest, and core developer platform tooling.",
+        "highlights": [
+          "Migrated monolith to event-driven Go services, reducing peak latency by 65%",
+          "Established automated CI/CD staging matrices reducing deploy rollback rates to 0.4%"
+        ],
+        "accent": "sun"
+      }
+    },
+    {
+      "_id": "exp_2",
+      "type": "experience",
+      "locale": "en",
+      "title": "Senior Backend Engineer @ Nexus FinTech Technologies",
+      "status": "published",
+      "sortOrder": 3,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "year": "2022 — 2024",
+        "startDate": "2022-03",
+        "endDate": "2024-01",
+        "isCurrent": false,
+        "type": "Work",
+        "organization": "Nexus FinTech Technologies",
+        "roleAtTime": "Senior Backend Engineer",
+        "description": "Led payment settlement reconciliations engine handling $40M daily transactional throughput.",
+        "highlights": [
+          "Authored idempotent ledger service preventing double-spend anomalies",
+          "Built real-time transaction monitoring dashboards with sub-second alert triggers"
+        ],
+        "accent": "sky"
+      }
+    },
+    {
+      "_id": "exp_3",
+      "type": "experience",
+      "locale": "en",
+      "title": "Full-stack Developer @ Orbit Digital Agency",
+      "status": "published",
+      "sortOrder": 4,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "year": "2020 — 2022",
+        "startDate": "2020-06",
+        "endDate": "2022-03",
+        "isCurrent": false,
+        "type": "Work",
+        "organization": "Orbit Digital Agency",
+        "roleAtTime": "Full-stack Developer",
+        "description": "Delivered high-traffic interactive web platforms, creative e-commerce, and bespoke CMS solutions.",
+        "highlights": [
+          "Delivered 18 client web applications with 100/100 Lighthouse performance scores"
+        ],
+        "accent": "lime"
+      }
+    },
+    {
+      "_id": "exp_4",
+      "type": "experience",
+      "locale": "en",
+      "title": "B.S. in Computer Science @ University of Science & Technology",
+      "status": "published",
+      "sortOrder": 5,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {},
+      "data": {
+        "year": "2016 — 2020",
+        "startDate": "2016-09",
+        "endDate": "2020-06",
+        "isCurrent": false,
+        "type": "Education",
+        "organization": "University of Science & Technology",
+        "roleAtTime": "B.S. in Computer Science",
+        "description": "Focused on Distributed Algorithms, Operating Systems, and Database Internals. Graduated with Honors.",
+        "highlights": [
+          "Published undergraduate thesis on distributed hash table partition tolerance"
+        ],
+        "accent": "pink"
+      }
+    },
+    {
+      "_id": "lab_sub-ms-vector-quantizer",
+      "type": "experiment",
+      "slug": "sub-ms-vector-quantizer",
+      "locale": "en",
+      "title": "Sub-millisecond Vector Quantizer",
+      "status": "published",
+      "sortOrder": 1,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {
+        "title": "Sub-millisecond Vector Quantizer — Technical Experiment",
+        "description": "SIMD-accelerated product quantization algorithm running directly in the browser via WebAssembly."
+      },
+      "data": {
+        "title": "Sub-millisecond Vector Quantizer",
+        "slug": "sub-ms-vector-quantizer",
+        "summary": "SIMD-accelerated product quantization algorithm running directly in the browser via WebAssembly.",
+        "status": "Shipped",
+        "accent": "sun",
+        "tags": [
+          "Rust",
+          "WebAssembly",
+          "Vector Search",
+          "SIMD"
+        ],
+        "objective": "Explore client-side nearest-neighbor searches over 500,000 vector embeddings without server roundtrips.",
+        "howItWorks": "Compresses 768-dim embeddings into 32-byte codes using k-means codebooks, computing asymmetric distance tables in L1 cache.",
+        "limitations": "High initial codebook download payload (approx 4.2MB).",
+        "takeaways": "Client-side vector search is viable for catalog browsing and zero-latency recommendations."
+      }
+    },
+    {
+      "_id": "lab_webgpu-particle-canvas",
+      "type": "experiment",
+      "slug": "webgpu-particle-canvas",
+      "locale": "en",
+      "title": "WebGPU Particle Collision Canvas",
+      "status": "draft",
+      "sortOrder": 1,
+      "revision": 1,
+      "lastPublishedRevision": 0,
+      "hasUnpublishedChanges": true,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {
+        "title": "WebGPU Particle Collision Canvas — Technical Experiment",
+        "description": "Interactive spatial partitioning simulation computing 250,000 colliding particles at 60 FPS."
+      },
+      "data": {
+        "title": "WebGPU Particle Collision Canvas",
+        "slug": "webgpu-particle-canvas",
+        "summary": "Interactive spatial partitioning simulation computing 250,000 colliding particles at 60 FPS.",
+        "status": "Prototype",
+        "accent": "coral",
+        "tags": [
+          "WebGPU",
+          "WGSL",
+          "Compute Shaders",
+          "TypeScript"
+        ],
+        "objective": "Stress-test WebGPU compute pipeline dispatch performance in modern desktop browsers.",
+        "howItWorks": "Uses parallel Bitonic sorting inside GPU compute shaders to build a uniform grid for spatial hashing.",
+        "limitations": "Requires WebGPU support; falls back to 5,000 particles on Canvas 2D.",
+        "takeaways": "Compute shaders offer 50x throughput over CPU-bound canvas loops."
+      }
+    },
+    {
+      "_id": "lab_crdt-p2p-sync",
+      "type": "experiment",
+      "slug": "crdt-p2p-sync",
+      "locale": "en",
+      "title": "CRDT P2P Document Sync",
+      "status": "draft",
+      "sortOrder": 1,
+      "revision": 1,
+      "lastPublishedRevision": 0,
+      "hasUnpublishedChanges": true,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {
+        "title": "CRDT P2P Document Sync — Technical Experiment",
+        "description": "Serverless peer-to-peer real-time collaborative text editor backed by Yjs and WebRTC data channels."
+      },
+      "data": {
+        "title": "CRDT P2P Document Sync",
+        "slug": "crdt-p2p-sync",
+        "summary": "Serverless peer-to-peer real-time collaborative text editor backed by Yjs and WebRTC data channels.",
+        "status": "Exploring",
+        "accent": "sky",
+        "tags": [
+          "CRDT",
+          "WebRTC",
+          "Yjs",
+          "Distributed State"
+        ],
+        "objective": "Examine offline-first conflict-free document replication without centralized storage.",
+        "howItWorks": "State vectors exchanged over WebSockets signaling, then direct peer WebRTC mesh with automatic reconnects.",
+        "limitations": "Mesh topology struggles above 15 simultaneous active peers.",
+        "takeaways": "Hybrid mesh with relay fallbacks provides optimal balance for small teams."
+      }
+    },
+    {
+      "_id": "note_designing-resilient-event-pipelines",
+      "type": "note",
+      "slug": "designing-resilient-event-pipelines",
+      "locale": "en",
+      "title": "Designing Resilient Distributed Event Pipelines",
+      "status": "published",
+      "sortOrder": 1,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {
+        "title": "Designing Resilient Distributed Event Pipelines | Technical Notes",
+        "description": "Practical patterns for backpressure, dead-letter queues, and exactly-once processing guarantees in production systems."
+      },
+      "data": {
+        "title": "Designing Resilient Distributed Event Pipelines",
+        "slug": "designing-resilient-event-pipelines",
+        "category": "Architecture",
+        "readTime": "8 min read",
+        "excerpt": "Practical patterns for backpressure, dead-letter queues, and exactly-once processing guarantees in production systems.",
+        "tags": [
+          "Distributed Systems",
+          "Kafka",
+          "Architecture",
+          "Resilience"
+        ],
+        "content": [
+          "Handling failure in distributed systems is not an exceptional case; it is the fundamental operating state.",
+          "When network partitions occur, unbounded buffering quickly exhausts system RAM, triggering cascading crashes across downstream workers.",
+          "Implementing strict token-bucket rate limiters at the edge preserves broker stability while preserving incoming requests."
+        ],
+        "markdownBody": "# Designing Resilient Distributed Event Pipelines\n\nHandling failure in distributed systems is not an exceptional case; it is the fundamental operating state.\n\n## 1. Backpressure and Ingestion Limits\nWhen network partitions occur, unbounded buffering quickly exhausts system RAM, triggering cascading crashes across downstream workers.\n\nImplementing strict token-bucket rate limiters at the edge preserves broker stability while preserving incoming requests.\n\n## 2. Idempotency Keys\nAlways associate every incoming message with a cryptographic content hash or client UUID to guarantee deterministic deduplication."
+      }
+    },
+    {
+      "_id": "note_tailwind-v4-neo-brutalist-layouts",
+      "type": "note",
+      "slug": "tailwind-v4-neo-brutalist-layouts",
+      "locale": "en",
+      "title": "Tailwind CSS v4 & The Art of Neo-Brutalist Layouts",
+      "status": "published",
+      "sortOrder": 1,
+      "revision": 1,
+      "lastPublishedRevision": 1,
+      "hasUnpublishedChanges": false,
+      "references": [],
+      "createdAt": "2026-10-17T05:45:27.475Z",
+      "updatedAt": "2026-10-17T05:45:27.475Z",
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "createdBy": "owner",
+      "seo": {
+        "title": "Tailwind CSS v4 & The Art of Neo-Brutalist Layouts | Technical Notes",
+        "description": "How to utilize the new CSS-first engine of Tailwind v4 to create high-contrast, tactile, defiant web interfaces."
+      },
+      "data": {
+        "title": "Tailwind CSS v4 & The Art of Neo-Brutalist Layouts",
+        "slug": "tailwind-v4-neo-brutalist-layouts",
+        "category": "Design Engineering",
+        "readTime": "6 min read",
+        "excerpt": "How to utilize the new CSS-first engine of Tailwind v4 to create high-contrast, tactile, defiant web interfaces.",
+        "tags": [
+          "CSS",
+          "Tailwind v4",
+          "UI Design",
+          "Neo-Brutalism"
+        ],
+        "content": [
+          "Neo-Brutalism rejects the sterile homogeneity of generic corporate SaaS interfaces in favor of physical boundaries, high contrast, and tactile feedback.",
+          "With Tailwind CSS v4, custom theme variables allow defining ink borders and zero-blur drop shadows directly in your CSS root."
+        ],
+        "markdownBody": "# Tailwind CSS v4 & The Art of Neo-Brutalist Layouts\n\nNeo-Brutalism rejects the sterile homogeneity of generic corporate SaaS interfaces in favor of physical boundaries, high contrast, and tactile feedback.\n\n## Theme configuration\nUsing the new @theme directive, design tokens live cleanly inside your CSS bundle."
+      }
+    }
+  ],
+  "cms_publications": [
+    {
+      "_id": "pub_home",
+      "entryId": "entry_page_home",
+      "type": "page",
+      "key": "home",
+      "locale": "en",
+      "publicData": {
+        "sections": [
+          {
+            "id": "sec_announcement",
+            "type": "announcement",
+            "name": "Announcement Strip",
+            "enabled": true,
+            "order": 1,
+            "props": {
+              "label": "STATUS",
+              "message": "Available for Q4 contracts & architectural advisory.",
+              "linkUrl": "/contact"
+            }
+          },
+          {
+            "id": "sec_hero",
+            "type": "hero_poster",
+            "name": "Hero Poster",
+            "enabled": true,
+            "order": 2,
+            "props": {
+              "eyebrow": "PORTFOLIO / 2026",
+              "headlineLines": [
+                "FULL-STACK",
+                "SYSTEMS &",
+                "AI BUILDER"
+              ],
+              "intro": "Architecting resilient backend pipelines, performant web platforms, and machine intelligence workflows with unapologetic craft.",
+              "primaryCta": {
+                "label": "EXPLORE CASE STUDIES →",
+                "href": "/work"
+              },
+              "secondaryCta": {
+                "label": "DOWNLOAD CV",
+                "href": "/resume.pdf"
+              },
+              "statusLabel": "SYSTEMS ONLINE",
+              "heroAccent": "sun",
+              "featuredProjectId": "proj_1",
+              "featuredProjectEnabled": true
+            }
+          },
+          {
+            "id": "sec_marquee",
+            "type": "marquee",
+            "name": "Capability Marquee",
+            "enabled": true,
+            "order": 3,
+            "props": {
+              "keywords": [
+                "Distributed Systems",
+                "Next.js 16",
+                "TypeScript",
+                "Tailwind v4",
+                "PostgreSQL",
+                "High Concurrency",
+                "Vector Search",
+                "Event Driven"
+              ],
+              "speedPreset": "normal"
+            }
+          },
+          {
+            "id": "sec_about",
+            "type": "about_manifesto",
+            "name": "About Manifesto",
+            "enabled": true,
+            "order": 4,
+            "props": {
+              "sectionLabel": "THE PHILOSOPHY",
+              "headline": "NO FLUFF. DETERMINISTIC CODE. RELIABLE ARCHITECTURE.",
+              "body": "I build software that does what it says on the tin. Over 7 years delivering mission-critical applications across fintech, logistics, and AI infrastructure.",
+              "chips": [
+                "Pragmatic Engineering",
+                "Zero Over-engineering",
+                "High Signal-to-Noise",
+                "Measurable ROI"
+              ],
+              "ctaText": "READ FULL STORY →",
+              "ctaHref": "/about"
+            }
+          },
+          {
+            "id": "sec_capabilities",
+            "type": "capability_grid",
+            "name": "Capabilities Board (What I Build)",
+            "enabled": true,
+            "order": 5,
+            "props": {
+              "displayCount": 6
+            }
+          },
+          {
+            "id": "sec_featured_work",
+            "type": "featured_work",
+            "name": "Featured Work Wall",
+            "enabled": true,
+            "order": 6,
+            "props": {
+              "mode": "curated",
+              "selectedProjectIds": [
+                "proj_1",
+                "proj_2"
+              ]
+            }
+          },
+          {
+            "id": "sec_toolbox",
+            "type": "toolbox",
+            "name": "Toolbox / Skills",
+            "enabled": true,
+            "order": 7,
+            "props": {
+              "selectedCategories": [
+                "Languages",
+                "Frontend",
+                "Backend",
+                "Data",
+                "AI",
+                "Tools"
+              ]
+            }
+          },
+          {
+            "id": "sec_journey",
+            "type": "journey",
+            "name": "Journey & Experience",
+            "enabled": true,
+            "order": 8,
+            "props": {
+              "maxItems": 5
+            }
+          },
+          {
+            "id": "sec_lab",
+            "type": "experiment_grid",
+            "name": "Lab & Prototypes",
+            "enabled": true,
+            "order": 9,
+            "props": {
+              "maxItems": 4
+            }
+          },
+          {
+            "id": "sec_notes",
+            "type": "notes_grid",
+            "name": "Technical Notes",
+            "enabled": true,
+            "order": 10,
+            "props": {
+              "maxItems": 4
+            }
+          },
+          {
+            "id": "sec_contact",
+            "type": "contact_poster",
+            "name": "Contact Poster",
+            "enabled": true,
+            "order": 11,
+            "props": {
+              "eyebrow": "INITIATE CONTACT",
+              "headline": "LET'S BUILD SOMETHING DEFIANT.",
+              "message": "Whether you need end-to-end system design, high-performance web engineering, or technical leadership, let us connect.",
+              "primaryCta": {
+                "label": "SEND MESSAGE ↗",
+                "href": "mailto:contact@datnguyen.dev"
+              }
+            }
+          }
+        ]
+      },
+      "publicSeo": {
+        "title": "Dat Nguyen — Modern Neo-Brutal Developer Portfolio",
+        "description": "Software Engineer, Systems Thinker & Digital Craftsman."
+      },
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "sourceRevision": 3,
+      "referencedIds": [
+        "proj_1",
+        "proj_2",
+        "med_avatar"
+      ],
+      "schemaVersion": 1
+    },
+    {
+      "_id": "pub_proj_1",
+      "entryId": "proj_1",
+      "type": "project",
+      "slug": "aerosync-cloud",
+      "locale": "en",
+      "publicData": {
+        "title": "AeroSync Cloud",
+        "slug": "aerosync-cloud",
+        "year": "2025",
+        "index": "01",
+        "category": "Backend & APIs",
+        "summary": "High-throughput real-time telemetry streaming and state sync engine handling 120,000 events/second with sub-10ms latency.",
+        "accent": "sun",
+        "tags": [
+          "Distributed Systems",
+          "Go",
+          "Kafka",
+          "Redis Cluster",
+          "Kubernetes"
+        ],
+        "status": "Shipped",
+        "featured": true,
+        "demoUrl": "https://demo.aerosync.io",
+        "repoUrl": "https://github.com/datnguyen/aerosync",
+        "coverImage": "/images/aerosync.png",
+        "caseStudy": {
+          "overview": {
+            "product": "AeroSync Cloud Engine",
+            "targetUsers": "Autonomous drone fleets & IoT operational dispatchers",
+            "timeline": "6 months",
+            "role": "Lead Distributed Systems Architect",
+            "status": "In Production"
+          },
+          "problem": "Legacy message queues suffered from unbounded head-of-line blocking and memory spikes during intermittent network drops.",
+          "contribution": [
+            "Architected custom zero-allocation binary protocol over WebSockets with multiplexed bidirectional frames.",
+            "Implemented Raft-based distributed coordinator for partition rebalancing without dropped frames.",
+            "Engineered backpressure and sliding-window rate limiters reducing p99 latency by 72%."
+          ],
+          "approach": {
+            "summary": "Event-driven partitioning with local memory caches backed by RocksDB and persistent Kafka streams.",
+            "architecturePoints": [
+              "Zero-copy ingestion pipelines via Go sync.Pool allocations",
+              "Consistent hashing ring across 12 worker nodes",
+              "Prometheus instrumentation with automated anomaly alerting"
+            ]
+          },
+          "highlights": [
+            "120,000 events/sec sustained load in production",
+            "Sub-10ms p99 latency across cross-regional nodes",
+            "99.995% uptime over 12 consecutive months"
+          ],
+          "outcomes": [
+            "Reduced server infrastructure footprint by 40%",
+            "Eliminated data loss during transient cellular disconnections"
+          ],
+          "lessons": [
+            "Prioritize deterministic memory reclamation early in Go high-throughput services.",
+            "Strict schema validation at ingress pays compound dividends down the line."
+          ]
+        }
+      },
+      "publicSeo": {
+        "title": "AeroSync Cloud — Distributed Event Processing Engine",
+        "description": "Scalable cloud synchronization and ingestion service handling 100k events/sec."
+      },
+      "publishedAt": "2026-10-17T05:45:27.475Z",
+      "sourceRevision": 4,
+      "referencedIds": [
+        "med_aerosync"
+      ],
+      "schemaVersion": 1
+    }
+  ],
+  "cms_revisions": [],
+  "cms_globals": [
+    {
+      "_id": "site_globals",
+      "siteSettings": {
+        "siteTitle": "Dat Nguyen — Senior Software Engineer & System Builder",
+        "ownerName": "Dat Nguyen",
+        "tagline": "Defiant engineering. Resilient systems. Tactile interfaces.",
+        "description": "Senior Full-stack Engineer specializing in high-scale distributed architectures, clean APIs, and Neo-Brutal web experiences.",
+        "logoText": "DAT.DEV",
+        "contactEmail": "contact@datnguyen.dev",
+        "resumeUrl": "/resume.pdf",
+        "socialLinks": [
+          {
+            "platform": "GitHub",
+            "label": "github.com/datnguyen",
+            "url": "https://github.com"
+          },
+          {
+            "platform": "LinkedIn",
+            "label": "linkedin.com/in/datnguyen",
+            "url": "https://linkedin.com"
+          },
+          {
+            "platform": "X",
+            "label": "x.com/datnguyen_dev",
+            "url": "https://x.com"
+          }
+        ],
+        "seoDefaults": {
+          "ogImage": "/images/og-preview.png",
+          "keywords": [
+            "Full-stack Engineer",
+            "Next.js 16",
+            "TypeScript",
+            "Distributed Systems",
+            "PostgreSQL",
+            "MongoDB",
+            "Neo-Brutalism"
+          ],
+          "siteTitleTemplate": "%s | Dat Nguyen"
+        }
+      },
+      "announcement": {
+        "enabled": true,
+        "label": "STATUS: ACTIVE",
+        "message": "Available for Q4 senior contracts & high-impact architectural initiatives.",
+        "linkLabel": "GET IN TOUCH →",
+        "linkUrl": "/contact",
+        "statusType": "open"
+      },
+      "navigation": [
+        {
+          "id": "nav_1",
+          "label": "WORK",
+          "href": "/work",
+          "isExternal": false,
+          "order": 1
+        },
+        {
+          "id": "nav_2",
+          "label": "CAPABILITIES",
+          "href": "/#capabilities",
+          "isExternal": false,
+          "order": 2
+        },
+        {
+          "id": "nav_3",
+          "label": "TOOLBOX",
+          "href": "/#toolbox",
+          "isExternal": false,
+          "order": 3
+        },
+        {
+          "id": "nav_4",
+          "label": "EXPERIENCE",
+          "href": "/#experience",
+          "isExternal": false,
+          "order": 4
+        },
+        {
+          "id": "nav_5",
+          "label": "LAB",
+          "href": "/lab",
+          "isExternal": false,
+          "order": 5
+        },
+        {
+          "id": "nav_6",
+          "label": "NOTES",
+          "href": "/notes",
+          "isExternal": false,
+          "order": 6
+        },
+        {
+          "id": "nav_7",
+          "label": "CONTACT",
+          "href": "/contact",
+          "isExternal": false,
+          "order": 7
+        }
+      ],
+      "appearance": {
+        "accentPreset": "sun",
+        "sectionVariant": "neo-brutal-clean"
+      },
+      "redirects": [
+        {
+          "id": "red_1",
+          "source": "/projects/old-aerosync",
+          "destination": "/work/aerosync-cloud",
+          "permanent": true,
+          "createdAt": "2026-10-17T05:45:27.475Z"
+        }
+      ]
+    }
+  ],
+  "cms_media": [
+    {
+      "_id": "med_aerosync",
+      "filename": "aerosync-architecture.png",
+      "storageKey": "uploads/2026/10/aerosync-architecture.png",
+      "url": "/images/aerosync.png",
+      "mimeType": "image/png",
+      "size": 482100,
+      "dimensions": {
+        "width": 1200,
+        "height": 675
+      },
+      "alt": "AeroSync Cloud Event Pipeline architecture diagram",
+      "caption": "Distributed event bus topology diagram",
+      "usageReferences": [
+        {
+          "entryId": "proj_1",
+          "entryTitle": "AeroSync Cloud",
+          "field": "coverImage"
+        }
+      ],
+      "createdAt": "2026-10-17T05:45:27.475Z"
+    },
+    {
+      "_id": "med_hypervibe",
+      "filename": "hypervibe-preview.png",
+      "storageKey": "uploads/2026/10/hypervibe-preview.png",
+      "url": "/images/hypervibe.png",
+      "mimeType": "image/png",
+      "size": 612400,
+      "dimensions": {
+        "width": 1200,
+        "height": 675
+      },
+      "alt": "HyperVibe DSP interactive synthesizer interface mockup",
+      "caption": "WebAudio DSP canvas in dark mode",
+      "usageReferences": [
+        {
+          "entryId": "proj_2",
+          "entryTitle": "HyperVibe DSP",
+          "field": "coverImage"
+        }
+      ],
+      "createdAt": "2026-10-17T05:45:27.475Z"
+    },
+    {
+      "_id": "med_avatar",
+      "filename": "profile-portrait.jpg",
+      "storageKey": "uploads/2026/10/profile-portrait.jpg",
+      "url": "/images/avatar.jpg",
+      "mimeType": "image/jpeg",
+      "size": 215000,
+      "dimensions": {
+        "width": 800,
+        "height": 800
+      },
+      "alt": "Dat Nguyen portrait avatar with neo-brutal outline",
+      "usageReferences": [
+        {
+          "entryId": "home",
+          "entryTitle": "Homepage",
+          "field": "about_manifesto"
+        }
+      ],
+      "createdAt": "2026-10-17T05:45:27.475Z"
+    }
+  ],
+  "cms_audit_logs": [
+    {
+      "_id": "audit_init",
+      "actor": "system",
+      "action": "publish",
+      "targetType": "page",
+      "targetId": "entry_page_home",
+      "targetTitle": "Homepage",
+      "details": "Initial system bootstrap and portfolio seed publication",
+      "createdAt": "2026-10-17T05:45:27.475Z"
+    }
+  ],
+  "cms_redirects": []
+}
