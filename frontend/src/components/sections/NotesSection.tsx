@@ -6,9 +6,13 @@ import { Card } from '@/components/ui/Card';
 
 interface NotesSectionProps {
   notes: Note[];
+  header?: { eyebrow: string; headline: string };
 }
 
-export const NotesSection: React.FC<NotesSectionProps> = ({ notes }) => {
+export const NotesSection: React.FC<NotesSectionProps> = ({
+  notes,
+  header = { eyebrow: '// 08. FIELD LOGS', headline: 'NOTES FROM THE BUILD' },
+}) => {
   return (
     <section
       id="notes"
@@ -20,11 +24,11 @@ export const NotesSection: React.FC<NotesSectionProps> = ({ notes }) => {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-8 border-b-3 border-[#111111] mb-12">
           <div className="flex flex-col gap-2">
             <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#5B5751] flex items-center gap-1.5">
-              <BookOpen size={14} />
-              <span>// 08. FIELD LOGS</span>
+              <BookOpen size={12} />
+              <span>{header.eyebrow}</span>
             </span>
             <h2 className="font-display font-extrabold text-3xl md:text-5xl text-[#111111] uppercase tracking-tight">
-              NOTES FROM THE BUILD
+              {header.headline}
             </h2>
           </div>
           <Link

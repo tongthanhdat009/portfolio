@@ -55,13 +55,13 @@ export default async function HomePage() {
       <ToolboxSection technologies={technologies} />
 
       {/* Section 08: Journey / Timeline */}
-      <JourneySection items={experience} />
+      <JourneySection items={experience} settings={settings} />
 
       {/* Section 09: Lab / Experiments Grid */}
-      <LabSection experiments={experiments} />
+      <LabSection experiments={experiments} header={homeData.lab} />
 
       {/* Section 10: Notes / Field Logs */}
-      <NotesSection notes={notes} />
+      <NotesSection notes={notes} header={homeData.notes} />
 
       {/* Section 11: Contact / Final Poster */}
       <ContactSection settings={settings} />

@@ -41,7 +41,7 @@ export default async function LabPage() {
             <FlaskConical size={12} />
             <span>// EXPERIMENTAL LAB</span>
           </span>
-          <h1 className="font-display font-extrabold text-4xl sm:text-6xl md:text-7xl text-[#111111] uppercase tracking-tight mt-2 mb-4">
+          <h1 className="font-display font-extrabold text-[clamp(1.375rem,6vw,3.75rem)] whitespace-nowrap text-[#111111] uppercase tracking-tight mt-2 mb-4">
             PROTOTYPES & BENCHMARKS
           </h1>
           <p className="text-base md:text-xl text-[#111111] max-w-2xl font-medium leading-relaxed">

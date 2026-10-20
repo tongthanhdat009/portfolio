@@ -15,7 +15,7 @@ export default async function HomePageBuilder() {
 
   return (
     <HomePageBuilderClient
-      initialHomeEntry={homeEntry as any}
+      initialHomeEntry={homeEntry}
       allProjects={projectOptions}
     />
   );

@@ -16,7 +16,7 @@ COPY . /var/www/html
 RUN composer install --optimize-autoloader --ignore-platform-req=ext-mongodb \
     && php artisan key:generate --show || true
 
-EXPOSE 8000
+EXPOSE 9000
 # NOTE: `php artisan serve` strips process env down to a whitelist, which breaks
 # env-driven config (MONGODB_URI, S3, ...). Plain `php -S` inherits full env.
-CMD ["sh", "-c", "cd public && exec php -S 0.0.0.0:8000 ../vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php"]
+CMD ["sh", "-c", "cd public && exec php -S 0.0.0.0:9000 ../vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php"]

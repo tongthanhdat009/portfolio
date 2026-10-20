@@ -34,9 +34,8 @@ export default async function AboutPage() {
             // EXTENDED STORY & PHILOSOPHY
           </span>
 
-          <h1 className="font-display font-black text-4xl sm:text-6xl md:text-7xl text-[#111111] uppercase tracking-tight mt-4 mb-4 leading-none">
-            BUILD LOUD. <br />
-            THINK CLEAR.
+          <h1 className="font-display font-black text-[clamp(1.375rem,6vw,3.75rem)] whitespace-nowrap text-[#111111] uppercase tracking-tight mt-4 mb-4 leading-none">
+            BUILD LOUD. THINK CLEAR.
           </h1>
 
           <p className="text-lg md:text-2xl text-[#111111] font-medium max-w-2xl leading-relaxed mb-6">

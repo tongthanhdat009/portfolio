@@ -68,7 +68,13 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       }`}
     >
       {/* Brand Header */}
-      <div className="h-16 flex items-center justify-between px-4 border-b-2 border-[var(--color-ink)] bg-[var(--color-paper)]">
+      <div
+        className={`border-b-2 border-[var(--color-ink)] bg-[var(--color-paper)] ${
+          isCollapsed
+            ? 'flex flex-col items-center gap-2 py-3 px-2'
+            : 'h-16 flex items-center justify-between px-4'
+        }`}
+      >
         {!isCollapsed && (
           <Link href="/admin" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-[var(--radius-sm)] bg-[var(--color-sun)] border-2 border-[var(--color-ink)] shadow-[var(--shadow-neo-sm)] flex items-center justify-center font-display font-extrabold text-sm">
@@ -85,7 +91,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           </Link>
         )}
         {isCollapsed && (
-          <div className="w-full flex justify-center">
+          <div className="flex justify-center">
             <div className="w-9 h-9 rounded-[var(--radius-sm)] bg-[var(--color-sun)] border-2 border-[var(--color-ink)] shadow-[var(--shadow-neo-sm)] flex items-center justify-center font-display font-black text-sm">
               D
             </div>

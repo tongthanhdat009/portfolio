@@ -117,6 +117,18 @@ export interface SiteSettings {
   logoText: string;
   contactEmail: string;
   resumeUrl: string;
+  contactEyebrow?: string;
+  contactHeading?: string;
+  contactIntro?: string;
+  journeyEyebrow?: string;
+  journeyHeading?: string;
+  journeyIntro?: string;
+  journeyChapters?: Array<{
+    type: string;
+    title: string;
+    subtitle: string;
+    accent: string;
+  }>;
   socialLinks: Array<{
     platform: string;
     label: string;
@@ -220,8 +232,10 @@ export interface ProjectData {
   demoUrl?: string;
   repoUrl?: string;
   coverImage?: string;
+  coverAlt?: string;
   coverMediaId?: string;
   galleryMediaIds?: string[];
+  techStack?: string[];
   caseStudy: ProjectCaseStudy;
 }
 

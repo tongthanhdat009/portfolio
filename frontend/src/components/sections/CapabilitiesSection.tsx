@@ -76,10 +76,10 @@ export const CapabilitiesSection: React.FC<CapabilitiesSectionProps> = ({ items 
                 <div className="pt-4 mt-4 border-t border-[#111111]/30">
                   <Link
                     href={item.relatedWorkLink}
-                    className="inline-flex items-center gap-1 font-display text-xs font-bold uppercase tracking-wider text-[#111111] group-hover:text-[#FF7661] transition-colors"
+                    className="inline-flex items-center gap-1 font-display text-xs font-bold uppercase tracking-wider text-[#111111] underline decoration-2 underline-offset-4 hover:decoration-[3px]"
                   >
                     <span>Explore related work</span>
-                    <ArrowUpRight size={14} />
+                    <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </Link>
                 </div>
               )}

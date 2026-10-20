@@ -20,11 +20,22 @@ const CATEGORIES: Array<TechCategory | 'All'> = [
 
 export const ToolboxSection: React.FC<ToolboxSectionProps> = ({ technologies }) => {
   const [selectedCategory, setSelectedCategory] = useState<TechCategory | 'All'>('All');
+  const [page, setPage] = useState(1);
+  const PER_PAGE = 8;
 
   const filteredTechs =
     selectedCategory === 'All'
       ? technologies
       : technologies.filter((t) => t.category === selectedCategory);
+
+  const totalPages = Math.max(1, Math.ceil(filteredTechs.length / PER_PAGE));
+  const safePage = Math.min(page, totalPages);
+  const pagedTechs = filteredTechs.slice((safePage - 1) * PER_PAGE, safePage * PER_PAGE);
+
+  const selectCategory = (cat: TechCategory | 'All') => {
+    setSelectedCategory(cat);
+    setPage(1);
+  };
 
   return (
     <section
@@ -52,7 +63,7 @@ export const ToolboxSection: React.FC<ToolboxSectionProps> = ({ technologies }) 
         <div
           role="tablist"
           aria-label="Filter technologies by category"
-          className="flex items-center gap-2 overflow-x-auto pb-4 mb-8 select-none"
+          className="flex items-center gap-2 overflow-x-auto pl-1 pt-2 pb-4 mb-8 select-none"
         >
           {CATEGORIES.map((cat) => {
             const isSelected = selectedCategory === cat;
@@ -61,7 +72,7 @@ export const ToolboxSection: React.FC<ToolboxSectionProps> = ({ technologies }) 
                 key={cat}
                 role="tab"
                 aria-selected={isSelected}
-                onClick={() => setSelectedCategory(cat)}
+                onClick={() => selectCategory(cat)}
                 className={`px-4 py-2 font-display text-xs md:text-sm font-bold uppercase tracking-wider rounded-md border-2 border-[#111111] neo-btn-press whitespace-nowrap cursor-pointer ${
                   isSelected
                     ? 'bg-[#FFDB58] text-[#111111] neo-shadow-sm'
@@ -76,7 +87,7 @@ export const ToolboxSection: React.FC<ToolboxSectionProps> = ({ technologies }) 
 
         {/* Technology Cards Grid (5-6 cols on desktop) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {filteredTechs.map((tech) => (
+          {pagedTechs.map((tech) => (
             <Card
               key={tech.name}
               accent="surface"
@@ -105,6 +116,45 @@ export const ToolboxSection: React.FC<ToolboxSectionProps> = ({ technologies }) 
             </Card>
           ))}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between mt-8">
+            <span className="font-mono text-xs text-[#5B5751]">
+              Showing {(safePage - 1) * PER_PAGE + 1}–{Math.min(safePage * PER_PAGE, filteredTechs.length)} of {filteredTechs.length}
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={safePage <= 1}
+                className="px-3 py-1.5 font-mono text-xs font-bold uppercase border-2 border-[#111111] rounded-md bg-white disabled:opacity-30 disabled:cursor-not-allowed neo-btn-press cursor-pointer"
+                aria-label="Previous page"
+              >
+                ← Prev
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setPage(p)}
+                  aria-current={p === safePage ? 'page' : undefined}
+                  className={`px-3 py-1.5 font-mono text-xs font-bold border-2 border-[#111111] rounded-md cursor-pointer ${
+                    p === safePage ? 'bg-[#111111] text-[#FFF9E9]' : 'bg-white hover:bg-[#FFDB58]'
+                  }`}
+                >
+                  {p}
+                </button>
+              ))}
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={safePage >= totalPages}
+                className="px-3 py-1.5 font-mono text-xs font-bold uppercase border-2 border-[#111111] rounded-md bg-white disabled:opacity-30 disabled:cursor-not-allowed neo-btn-press cursor-pointer"
+                aria-label="Next page"
+              >
+                Next →
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

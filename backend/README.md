@@ -18,7 +18,7 @@ cp backend/.env.example backend/.env   # backend/.env đã gitignore
 docker compose up -d --build
 docker compose exec backend php artisan cms:bootstrap-indexes
 docker compose exec backend php artisan cms:create-owner owner@example.com
-curl http://localhost:8000/up
+curl http://localhost:9000/up
 ```
 
 `backend` trong compose override `MONGODB_URI` sang hostname `mongo`,

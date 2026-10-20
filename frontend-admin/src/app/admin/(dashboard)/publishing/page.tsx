@@ -1,18 +1,30 @@
-import { getEntries, getContentHealth } from '@/lib/cms/service';
+import { getEntriesPaged, getContentHealth } from '@/lib/cms/service';
 import PublishingClient from './PublishingClient';
 
 export const dynamic = 'force-dynamic';
 
-export default async function PublishingPage() {
-  const all = await getEntries();
-  const drafts = all.filter((e) => e.status === 'draft' || e.hasUnpublishedChanges);
-  const publishedEntries = all.filter((e) => e.status === 'published');
+const PER_PAGE = 10;
+
+export default async function PublishingPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ tab?: string; page?: string }>;
+}) {
+  const sp = (await searchParams) ?? {};
+  const tab = sp.tab === 'live' ? 'live' : 'drafts';
+  const page = Math.max(1, parseInt(sp.page || '1', 10) || 1);
+  const bundle = await getEntriesPaged({
+    status: tab === 'live' ? 'published' : 'draft',
+    page,
+    perPage: PER_PAGE,
+  });
   const healthIssues = await getContentHealth();
 
   return (
     <PublishingClient
-      drafts={drafts}
-      publishedEntries={publishedEntries}
+      key={`${tab}-${page}`}
+      bundle={bundle}
+      activeTab={tab}
       healthIssues={healthIssues}
     />
   );

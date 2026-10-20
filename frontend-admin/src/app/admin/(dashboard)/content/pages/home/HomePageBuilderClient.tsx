@@ -25,10 +25,11 @@ import { Button } from '@/components/ui/Button';
 import { Input, Textarea, Select } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
 import { Modal } from '@/components/ui/Modal';
-import { saveDraftAction, publishEntryAction } from '@/app/admin/actions';
+import { saveDraftAction, publishEntryAction, seedHomeAction } from '@/app/admin/actions';
+import { blocksToSections, sectionsToBlocks } from '@/lib/page-blocks';
 
 interface HomePageBuilderProps {
-  initialHomeEntry: CmsEntry;
+  initialHomeEntry: CmsEntry | null;
   allProjects: Array<{ id: string; title: string; status: string }>;
 }
 
@@ -36,12 +37,12 @@ export default function HomePageBuilderClient({
   initialHomeEntry,
   allProjects,
 }: HomePageBuilderProps) {
-  const [entry, setEntry] = useState(initialHomeEntry);
-  const [sections, setSections] = useState<PageSectionItem[]>(
-    initialHomeEntry.data?.sections || []
+  const [entry, setEntry] = useState<CmsEntry | null>(initialHomeEntry);
+  const [sections, setSections] = useState<PageSectionItem[]>(() =>
+    blocksToSections(initialHomeEntry?.data?.blocks)
   );
   const [selectedSectionId, setSelectedSectionId] = useState<string>(
-    initialHomeEntry.data?.sections?.[1]?.id || 'sec_hero'
+    () => blocksToSections(initialHomeEntry?.data?.blocks)?.[1]?.id || 'sec_hero'
   );
   const [viewport, setViewport] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [saveStatus, setSaveStatus] = useState<string>('');
@@ -94,16 +95,15 @@ export default function HomePageBuilderClient({
   };
 
   const handleSaveDraft = () => {
+    if (!entry) return;
     startTransition(async () => {
       try {
+        const data = { ...entry.data };
+        delete data.sections;
+        data.blocks = sectionsToBlocks(sections);
         const res = await saveDraftAction(
           entry._id,
-          {
-            data: {
-              ...entry.data,
-              sections,
-            },
-          },
+          { data },
           entry.revision
         );
         setEntry(res.entry);
@@ -115,16 +115,15 @@ export default function HomePageBuilderClient({
   };
 
   const handlePublish = () => {
+    if (!entry) return;
     startTransition(async () => {
       try {
+        const data = { ...entry.data };
+        delete data.sections;
+        data.blocks = sectionsToBlocks(sections);
         await saveDraftAction(
           entry._id,
-          {
-            data: {
-              ...entry.data,
-              sections,
-            },
-          },
+          { data },
           entry.revision
         );
         const res = await publishEntryAction(entry._id);
@@ -143,6 +142,46 @@ export default function HomePageBuilderClient({
     tablet: 'w-[768px] mx-auto',
     mobile: 'w-[375px] mx-auto',
   };
+
+  const [seedError, setSeedError] = useState('');
+  const handleSeed = () => {
+    startTransition(async () => {
+      try {
+        setSeedError('');
+        await seedHomeAction();
+        window.location.reload();
+      } catch (err) {
+        setSeedError(`Seed failed: ${(err as Error).message}`);
+      }
+    });
+  };
+
+  if (!entry) {
+    return (
+      <div className="space-y-6 animate-in fade-in duration-200">
+        <Card variant="surface" shadow="md" borderWidth="2" className="p-8 text-center">
+          <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto mb-2" />
+          <p className="font-display font-black text-sm text-stone-800">HOME PAGE NOT FOUND</p>
+          <p className="font-body text-xs text-stone-500 mt-1">
+            No page entry with key &apos;home&apos; exists yet. Seed the default block
+            layout (all sections enabled, content falls back to the public defaults),
+            then edit and publish.
+          </p>
+          <div className="mt-4 flex justify-center">
+            <Button variant="primary" size="md" onClick={handleSeed} isLoading={isPending}>
+              <Layers className="w-4 h-4" />
+              SEED DEFAULT HOME PAGE
+            </Button>
+          </div>
+          {seedError && (
+            <p className="font-mono text-xs font-bold text-[var(--color-negative)] mt-2">
+              {seedError}
+            </p>
+          )}
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
@@ -406,17 +445,20 @@ export default function HomePageBuilderClient({
                 <>
                   <Input
                     label="Label"
+                maxLength={40}
                     value={selectedSection.props?.label || ''}
                     onChange={(e) => handleUpdateProps(selectedSection.id, 'label', e.target.value)}
                   />
                   <Textarea
                     label="Announcement Message"
+                maxLength={140}
                     value={selectedSection.props?.message || ''}
                     onChange={(e) => handleUpdateProps(selectedSection.id, 'message', e.target.value)}
                     rows={2}
                   />
                   <Input
                     label="Target Link"
+                maxLength={2048}
                     value={selectedSection.props?.linkUrl || ''}
                     onChange={(e) => handleUpdateProps(selectedSection.id, 'linkUrl', e.target.value)}
                   />
@@ -427,6 +469,7 @@ export default function HomePageBuilderClient({
                 <>
                   <Input
                     label="Eyebrow Tag"
+                maxLength={40}
                     value={selectedSection.props?.eyebrow || ''}
                     onChange={(e) => handleUpdateProps(selectedSection.id, 'eyebrow', e.target.value)}
                   />
@@ -444,12 +487,14 @@ export default function HomePageBuilderClient({
                           handleUpdateProps(selectedSection.id, 'headlineLines', lines);
                         }}
                         placeholder={`Headline Line ${idx + 1}`}
+                        maxLength={24}
                       />
                     ))}
                   </div>
 
                   <Textarea
                     label="Hero Narrative Intro"
+                maxLength={200}
                     value={selectedSection.props?.intro || ''}
                     onChange={(e) => handleUpdateProps(selectedSection.id, 'intro', e.target.value)}
                     rows={3}
@@ -486,22 +531,26 @@ export default function HomePageBuilderClient({
                 <>
                   <Input
                     label="Section Eyebrow Label"
+                maxLength={40}
                     value={selectedSection.props?.sectionLabel || ''}
                     onChange={(e) => handleUpdateProps(selectedSection.id, 'sectionLabel', e.target.value)}
                   />
                   <Input
                     label="Manifesto Headline"
+                maxLength={80}
                     value={selectedSection.props?.headline || ''}
                     onChange={(e) => handleUpdateProps(selectedSection.id, 'headline', e.target.value)}
                   />
                   <Textarea
                     label="Manifesto Body"
+                maxLength={2000}
                     value={selectedSection.props?.body || ''}
                     onChange={(e) => handleUpdateProps(selectedSection.id, 'body', e.target.value)}
                     rows={4}
                   />
                   <Input
                     label="CTA Button Label"
+                maxLength={24}
                     value={selectedSection.props?.ctaText || ''}
                     onChange={(e) => handleUpdateProps(selectedSection.id, 'ctaText', e.target.value)}
                   />
@@ -553,15 +602,33 @@ export default function HomePageBuilderClient({
                 </>
               )}
 
-              {selectedSection.type === 'contact_poster' && (
+              {(selectedSection.type === 'experiment_grid' || selectedSection.type === 'notes_grid') && (
                 <>
                   <Input
+                    label="Section Eyebrow Label"
+                maxLength={40}
+                    value={selectedSection.props?.eyebrow || ''}
+                    onChange={(e) => handleUpdateProps(selectedSection.id, 'eyebrow', e.target.value)}
+                  />
+                  <Input
+                    label="Section Headline"
+                maxLength={80}
+                    value={selectedSection.props?.headline || ''}
+                    onChange={(e) => handleUpdateProps(selectedSection.id, 'headline', e.target.value)}
+                  />
+                </>
+              )}
+
+              {selectedSection.type === 'contact_poster' && (                <>
+                  <Input
                     label="Headline"
+                maxLength={80}
                     value={selectedSection.props?.headline || ''}
                     onChange={(e) => handleUpdateProps(selectedSection.id, 'headline', e.target.value)}
                   />
                   <Textarea
                     label="Message"
+                maxLength={500}
                     value={selectedSection.props?.message || ''}
                     onChange={(e) => handleUpdateProps(selectedSection.id, 'message', e.target.value)}
                     rows={3}

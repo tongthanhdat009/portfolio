@@ -37,7 +37,11 @@ class MediaController extends Controller
         }
 
         if ($request->filled('q')) {
-            $query->where('alt', 'like', '%'.$request->input('q').'%');
+            $q = (string) $request->input('q');
+            $query->where(function ($inner) use ($q) {
+                $inner->where('alt', 'like', "%{$q}%")
+                    ->orWhere('filename', 'like', "%{$q}%");
+            });
         }
 
         $items = $query->paginate($limit);

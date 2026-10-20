@@ -1,21 +1,31 @@
 'use client';
 
 import React, { useState, useTransition } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Plus, Edit2, Trash2, Milestone, Calendar } from 'lucide-react';
 import { CmsEntry, ExperienceData, ColorAccent } from '@/types';
+import type { PagedResult } from '@/lib/cms/service';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input, Textarea, Select } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
 import { Badge } from '@/components/ui/Badge';
 import { saveDraftAction, createEntryAction, deleteEntryAction, publishEntryAction } from '@/app/admin/actions';
+import { Pagination } from '@/components/ui/Pagination';
 
 interface ExperienceClientProps {
-  initialExperience: CmsEntry<ExperienceData>[];
+  initialBundle: PagedResult<CmsEntry<ExperienceData>>;
+  initialType: string;
 }
 
-export default function ExperienceClient({ initialExperience }: ExperienceClientProps) {
-  const [items, setItems] = useState(initialExperience);
+const TYPE_TABS = ['all', 'Work', 'Education', 'Research', 'Community', 'Milestone'];
+
+export default function ExperienceClient({ initialBundle, initialType }: ExperienceClientProps) {
+  const [bundle, setBundle] = useState(initialBundle);
+  const items = bundle.items as CmsEntry<ExperienceData>[];
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [editingExp, setEditingExp] = useState<Partial<CmsEntry<ExperienceData>> | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [highlightsInput, setHighlightsInput] = useState('');
@@ -81,8 +91,17 @@ export default function ExperienceClient({ initialExperience }: ExperienceClient
   const handleDelete = (id: string) => {
     startTransition(async () => {
       await deleteEntryAction(id);
-      setItems(items.filter((i) => i._id !== id));
+      setBundle((b) => ({ ...b, items: b.items.filter((i) => i._id !== id), total: Math.max(0, b.total - 1) }));
     });
+  };
+
+  const setTypeParam = (type: string) => {
+    const sp = new URLSearchParams(searchParams.toString());
+    if (!type || type === 'all') sp.delete('type');
+    else sp.set('type', type);
+    sp.delete('page');
+    const qs = sp.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname);
   };
 
   return (
@@ -103,6 +122,22 @@ export default function ExperienceClient({ initialExperience }: ExperienceClient
         <Button variant="primary" size="md" onClick={handleNew}>
           <Plus className="w-4 h-4" /> ADD MILESTONE
         </Button>
+      </div>
+
+      <div className="flex items-center gap-1.5 overflow-x-auto">
+        {TYPE_TABS.map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setTypeParam(tab)}
+            className={`px-3 py-1.5 rounded-[var(--radius-sm)] font-display text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+              initialType === tab
+                ? 'bg-[var(--color-sun)] text-[var(--color-ink)] border-2 border-[var(--color-ink)] shadow-[var(--shadow-neo-active)]'
+                : 'text-stone-600 hover:bg-[var(--color-paper)] border-2 border-transparent'
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
       </div>
 
       <div className="space-y-4">
@@ -151,6 +186,8 @@ export default function ExperienceClient({ initialExperience }: ExperienceClient
         ))}
       </div>
 
+      <Pagination page={bundle.page} totalPages={bundle.lastPage} total={bundle.total} perPage={bundle.perPage} />
+
       {/* Modal */}
       <Modal
         isOpen={isModalOpen}
@@ -162,6 +199,7 @@ export default function ExperienceClient({ initialExperience }: ExperienceClient
             <div className="grid grid-cols-2 gap-4">
               <Input
                 label="Role Title"
+                maxLength={80}
                 value={editingExp.data.roleAtTime || ''}
                 onChange={(e) =>
                   setEditingExp({
@@ -174,6 +212,7 @@ export default function ExperienceClient({ initialExperience }: ExperienceClient
               />
               <Input
                 label="Organization / Company"
+                maxLength={80}
                 value={editingExp.data.organization || ''}
                 onChange={(e) =>
                   setEditingExp({
@@ -189,6 +228,7 @@ export default function ExperienceClient({ initialExperience }: ExperienceClient
             <div className="grid grid-cols-3 gap-3">
               <Input
                 label="Year Display"
+                maxLength={24}
                 value={editingExp.data.year || ''}
                 onChange={(e) =>
                   setEditingExp({
@@ -236,6 +276,7 @@ export default function ExperienceClient({ initialExperience }: ExperienceClient
 
             <Textarea
               label="Summary Description"
+                maxLength={300}
               value={editingExp.data.description || ''}
               onChange={(e) =>
                 setEditingExp({
@@ -248,6 +289,7 @@ export default function ExperienceClient({ initialExperience }: ExperienceClient
 
             <Textarea
               label="Key Highlights (One per line)"
+                maxLength={1500}
               value={highlightsInput}
               onChange={(e) => setHighlightsInput(e.target.value)}
               rows={3}

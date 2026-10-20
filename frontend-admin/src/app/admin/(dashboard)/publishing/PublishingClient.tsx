@@ -11,14 +11,15 @@ import {
   Clock,
   Layers,
   ArrowRight,
-  ShieldCheck,
   Undo2,
 } from 'lucide-react';
 import { CmsEntry, ContentHealthIssue } from '@/types';
+import type { PagedResult } from '@/lib/cms/service';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge, StatusBadge } from '@/components/ui/Badge';
 import { Modal } from '@/components/ui/Modal';
+import { Pagination } from '@/components/ui/Pagination';
 import {
   publishEntryAction,
   unpublishEntryAction,
@@ -26,17 +27,17 @@ import {
 } from '@/app/admin/actions';
 
 interface PublishingClientProps {
-  drafts: CmsEntry[];
-  publishedEntries: CmsEntry[];
+  bundle: PagedResult<CmsEntry>;
+  activeTab: 'drafts' | 'live';
   healthIssues: ContentHealthIssue[];
 }
 
 export default function PublishingClient({
-  drafts,
-  publishedEntries,
+  bundle,
+  activeTab,
   healthIssues,
 }: PublishingClientProps) {
-  const [activeDrafts, setActiveDrafts] = useState(drafts);
+  const entries = bundle.items;
   const [selectedEntry, setSelectedEntry] = useState<CmsEntry | null>(null);
   const [revalidateMsg, setRevalidateMsg] = useState('');
   const [isPending, startTransition] = useTransition();
@@ -44,7 +45,6 @@ export default function PublishingClient({
   const handlePublish = (entry: CmsEntry) => {
     startTransition(async () => {
       await publishEntryAction(entry._id);
-      setActiveDrafts(activeDrafts.filter((d) => d._id !== entry._id));
       setSelectedEntry(null);
       window.location.reload();
     });
@@ -98,42 +98,71 @@ export default function PublishingClient({
         </div>
       )}
 
-      {/* Grid: Left Drafts Queue (8 Cols), Right Health & Status (4 Cols) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Pending Releases Queue */}
-        <div className="lg:col-span-8 space-y-4">
+      {/* Queue Tabs + Lists */}
+      <div className="flex items-center gap-1.5">
+        {(
+          [
+            { id: 'drafts', label: 'PENDING DRAFTS' },
+            { id: 'live', label: 'LIVE PUBLICATIONS' },
+          ] as const
+        ).map((t) => (
+          <Link
+            key={t.id}
+            href={t.id === 'drafts' ? '/admin/publishing' : '/admin/publishing?tab=live'}
+            className={`px-3 py-1.5 rounded-[var(--radius-sm)] font-display text-xs font-bold uppercase tracking-wider transition-all ${
+              activeTab === t.id
+                ? 'bg-[var(--color-sun)] text-[var(--color-ink)] border-2 border-[var(--color-ink)] shadow-[var(--shadow-neo-sm)]'
+                : 'bg-white border-2 border-stone-300 text-stone-700 hover:border-[var(--color-ink)]'
+            }`}
+          >
+            {t.label}
+          </Link>
+        ))}
+      </div>
+
+      {/* Main List - Full Width */}
+      <div className="grid grid-cols-1 gap-6 items-start">
+        <div className="space-y-4">
           <Card variant="surface" shadow="md" borderWidth="2" className="p-6">
             <div className="flex items-center justify-between border-b-2 border-stone-200 pb-3 mb-4">
               <div className="flex items-center gap-2">
                 <Clock className="w-5 h-5 text-amber-500" />
                 <h2 className="font-display font-black text-base uppercase tracking-wider text-[var(--color-ink)]">
-                  PENDING PUBLICATION QUEUE ({activeDrafts.length})
+                  {activeTab === 'live' ? 'LIVE PUBLICATIONS CATALOG' : 'PENDING PUBLICATION QUEUE'} ({bundle.total})
                 </h2>
               </div>
               <span className="font-mono text-xs text-stone-500">
-                Snapshots ready to go live
+                {activeTab === 'live' ? 'Snapshots live on the public site' : 'Snapshots ready to go live'}
               </span>
             </div>
 
-            {activeDrafts.length === 0 ? (
+            {entries.length === 0 ? (
               <div className="text-center py-12">
                 <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto mb-2" />
                 <h3 className="font-display font-bold text-sm text-stone-900">
-                  ALL CONTENT UP TO DATE
+                  {activeTab === 'live' ? 'NOTHING LIVE YET' : 'ALL CONTENT UP TO DATE'}
                 </h3>
                 <p className="font-body text-xs text-stone-500 mt-1">
-                  There are no unpublished drafts or pending revisions. Public portfolio is completely in sync.
+                  {activeTab === 'live'
+                    ? 'Publish a draft to create a live snapshot.'
+                    : 'There are no unpublished drafts. Public portfolio is in sync.'}
                 </p>
               </div>
             ) : (
               <div className="divide-y-2 divide-stone-100">
-                {activeDrafts.map((entry) => (
+                {entries.map((entry) => (
                   <div key={entry._id} className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <Badge variant="sun" size="sm">
-                          {entry.type}
-                        </Badge>
+                        {activeTab === 'live' ? (
+                          <Badge variant="lime" size="sm">
+                            LIVE
+                          </Badge>
+                        ) : (
+                          <Badge variant="sun" size="sm">
+                            {entry.type}
+                          </Badge>
+                        )}
                         <span className="font-mono text-xs font-bold text-stone-400">
                           rev #{entry.revision}
                         </span>
@@ -142,77 +171,40 @@ export default function PublishingClient({
                         {entry.title}
                       </h4>
                       <span className="font-mono text-xs text-stone-500">
-                        Last modified: {new Date(entry.updatedAt).toLocaleTimeString()} · {new Date(entry.updatedAt).toLocaleDateString()}
+                        {activeTab === 'live'
+                          ? `published rev #${entry.lastPublishedRevision || entry.revision} · /${entry.slug || entry.key}`
+                          : `Last modified: ${new Date(entry.updatedAt).toLocaleTimeString('en-US')} · ${new Date(entry.updatedAt).toLocaleDateString('en-US')}`}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={() => setSelectedEntry(entry)}
-                      >
-                        <Send className="w-3.5 h-3.5" /> PUBLISH
-                      </Button>
+                      {activeTab === 'live' ? (
+                        <button
+                          onClick={() => handleUnpublish(entry._id)}
+                          className="px-2.5 py-1.5 text-xs font-mono font-bold border-2 border-stone-300 rounded-[var(--radius-sm)] hover:bg-stone-100 hover:border-black cursor-pointer"
+                        >
+                          UNPUBLISH
+                        </button>
+                      ) : (
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          onClick={() => setSelectedEntry(entry)}
+                        >
+                          <Send className="w-3.5 h-3.5" /> PUBLISH
+                        </Button>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
             )}
-          </Card>
-
-          {/* Currently Published Live Entries */}
-          <Card variant="surface" shadow="md" borderWidth="2" className="p-6">
-            <h2 className="font-display font-black text-base uppercase tracking-wider text-[var(--color-ink)] mb-4 border-b-2 border-stone-200 pb-3">
-              LIVE PUBLICATIONS CATALOG ({publishedEntries.length})
-            </h2>
-
-            <div className="divide-y-2 divide-stone-100">
-              {publishedEntries.map((entry) => (
-                <div key={entry._id} className="py-3 flex items-center justify-between gap-4">
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <Badge variant="lime" size="sm">
-                        LIVE
-                      </Badge>
-                      <span className="font-display font-bold text-sm text-[var(--color-ink)] truncate">
-                        {entry.title}
-                      </span>
-                    </div>
-                    <span className="font-mono text-[11px] text-stone-400">
-                      published rev #{entry.lastPublishedRevision || entry.revision} · /{entry.slug || entry.key}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2 shrink-0">
-                    <button
-                      onClick={() => handleUnpublish(entry._id)}
-                      className="px-2.5 py-1 text-xs font-mono font-bold border-2 border-stone-300 rounded hover:bg-stone-100 hover:border-black cursor-pointer"
-                    >
-                      UNPUBLISH
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-        </div>
-
-        {/* Right Info Box */}
-        <div className="lg:col-span-4 space-y-4">
-          <Card variant="paper" shadow="md" borderWidth="2" className="p-5 space-y-3">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-emerald-700" />
-              <h3 className="font-display font-bold text-sm uppercase">
-                PUBLISHING INTEGRITY
-              </h3>
-            </div>
-            <p className="text-xs font-body text-stone-700 leading-relaxed">
-              When an item is published, an immutable snapshot is copied to <code className="bg-stone-200 px-1 font-mono">cms_publications</code>. Draft edits do not mutate the public site until explicitly published.
-            </p>
-            <p className="text-xs font-body text-stone-700 leading-relaxed">
-              Cache invalidation issues do not break database state; operations are idempotent and auditable.
-            </p>
+            <Pagination
+              page={bundle.page}
+              totalPages={bundle.lastPage}
+              total={bundle.total}
+              perPage={bundle.perPage}
+            />
           </Card>
         </div>
       </div>

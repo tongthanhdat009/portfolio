@@ -6,6 +6,8 @@ import {
   Sliders,
   CheckCircle2,
   Globe,
+  Mail,
+  Route,
   Bell,
   Navigation,
   Palette,
@@ -22,13 +24,36 @@ import { Button } from '@/components/ui/Button';
 import { Input, Textarea, Select } from '@/components/ui/Input';
 import { updateGlobalsAction } from '@/app/admin/actions';
 
+interface SocialLink {
+  platform: string;
+  label: string;
+  url: string;
+}
+
+interface JourneyChapter {
+  type: string;
+  title: string;
+  subtitle: string;
+  accent: string;
+}
+
+const DEFAULT_JOURNEY_CHAPTERS: JourneyChapter[] = [
+  { type: 'Work', title: 'WORK EXPERIENCE', subtitle: 'Building things that matter.', accent: 'lime' },
+  { type: 'Education', title: 'EDUCATION', subtitle: 'Where curiosity meets knowledge.', accent: 'sky' },
+  { type: 'Research', title: 'RESEARCH & INNOVATION', subtitle: "Probing what's next.", accent: 'coral' },
+  { type: 'Community', title: 'COMMUNITY', subtitle: 'Giving back to the craft.', accent: 'sun' },
+  { type: 'Milestone', title: 'MILESTONES', subtitle: 'Moments that mattered.', accent: 'pink' },
+];
+
+const JOURNEY_ACCENTS = ['sun', 'sky', 'coral', 'lime', 'pink', 'paper', 'surface'];
+
 interface SettingsClientProps {
   initialGlobals: CmsGlobals;
 }
 
 export default function SettingsClient({ initialGlobals }: SettingsClientProps) {
   const [globals, setGlobals] = useState(initialGlobals);
-  const [activeTab, setActiveTab] = useState<'identity' | 'announcement' | 'navigation' | 'appearance' | 'seo' | 'export'>('identity');
+  const [activeTab, setActiveTab] = useState<'identity' | 'contact' | 'journey' | 'announcement' | 'navigation' | 'appearance' | 'seo' | 'export'>('identity');
   const [saveStatus, setSaveStatus] = useState('');
   const [isPending, startTransition] = useTransition();
 
@@ -40,6 +65,21 @@ export default function SettingsClient({ initialGlobals }: SettingsClientProps) 
   const [logoText, setLogoText] = useState(globals.siteSettings?.logoText || 'DAT.DEV');
   const [contactEmail, setContactEmail] = useState(globals.siteSettings?.contactEmail || '');
   const [resumeUrl, setResumeUrl] = useState(globals.siteSettings?.resumeUrl || '');
+  const [contactEyebrow, setContactEyebrow] = useState(globals.siteSettings?.contactEyebrow || '// INQUIRIES & COLLABORATION');
+  const [contactHeading, setContactHeading] = useState(globals.siteSettings?.contactHeading || 'SAY HELLO.');
+  const [contactIntro, setContactIntro] = useState(
+    globals.siteSettings?.contactIntro || 'Have a project in mind, an architectural challenge to discuss, or just want to connect? Send a note below.'
+  );
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>(globals.siteSettings?.socialLinks || []);
+  const [journeyEyebrow, setJourneyEyebrow] = useState(globals.siteSettings?.journeyEyebrow || '// 06. TIMELINE');
+  const [journeyHeading, setJourneyHeading] = useState(globals.siteSettings?.journeyHeading || 'THE JOURNEY SO FAR');
+  const [journeyIntro, setJourneyIntro] = useState(
+    globals.siteSettings?.journeyIntro ||
+      'Proven track record of shipping systems, rigorous research, and active open-source contribution.'
+  );
+  const [journeyChapters, setJourneyChapters] = useState<JourneyChapter[]>(
+    globals.siteSettings?.journeyChapters || DEFAULT_JOURNEY_CHAPTERS
+  );
 
   // Announcement
   const [announcementEnabled, setAnnouncementEnabled] = useState(globals.announcement?.enabled ?? true);
@@ -70,6 +110,14 @@ export default function SettingsClient({ initialGlobals }: SettingsClientProps) 
             logoText,
             contactEmail,
             resumeUrl,
+            contactEyebrow,
+            contactHeading,
+            contactIntro,
+            socialLinks,
+            journeyEyebrow,
+            journeyHeading,
+            journeyIntro,
+            journeyChapters,
             seoDefaults: {
               ...globals.siteSettings?.seoDefaults,
               siteTitleTemplate,
@@ -136,6 +184,8 @@ export default function SettingsClient({ initialGlobals }: SettingsClientProps) 
 
   const tabs = [
     { key: 'identity', label: 'Identity & Bio', icon: Globe },
+    { key: 'contact', label: 'Contact & Socials', icon: Mail },
+    { key: 'journey', label: 'Journey Chapters', icon: Route },
     { key: 'announcement', label: 'Announcement', icon: Bell },
     { key: 'navigation', label: 'Navigation', icon: Navigation },
     { key: 'appearance', label: 'Appearance', icon: Palette },
@@ -199,12 +249,14 @@ export default function SettingsClient({ initialGlobals }: SettingsClientProps) 
             <div className="grid grid-cols-2 gap-4">
               <Input
                 label="Owner / Display Name"
+                maxLength={60}
                 value={ownerName}
                 onChange={(e) => setOwnerName(e.target.value)}
                 placeholder="Dat Nguyen"
               />
               <Input
                 label="Logo / Brand Mark Text"
+                maxLength={20}
                 value={logoText}
                 onChange={(e) => setLogoText(e.target.value)}
                 placeholder="DAT.DEV"
@@ -213,6 +265,7 @@ export default function SettingsClient({ initialGlobals }: SettingsClientProps) 
 
             <Input
               label="Tagline"
+                maxLength={120}
               value={tagline}
               onChange={(e) => setTagline(e.target.value)}
               placeholder="Defiant engineering. Resilient systems. Tactile interfaces."
@@ -220,6 +273,7 @@ export default function SettingsClient({ initialGlobals }: SettingsClientProps) 
 
             <Textarea
               label="Bio / Site Description"
+                maxLength={160}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
@@ -227,18 +281,241 @@ export default function SettingsClient({ initialGlobals }: SettingsClientProps) 
 
             <div className="grid grid-cols-2 gap-4">
               <Input
-                label="Contact Email"
-                value={contactEmail}
-                onChange={(e) => setContactEmail(e.target.value)}
-                placeholder="contact@datnguyen.dev"
-              />
-              <Input
                 label="Resume / CV File Path"
+                maxLength={2048}
                 value={resumeUrl}
                 onChange={(e) => setResumeUrl(e.target.value)}
                 placeholder="/resume.pdf"
               />
             </div>
+          </div>
+        )}
+
+        {/* Tab: Contact & Socials */}
+        {activeTab === 'contact' && (
+          <div className="space-y-5 max-w-2xl">
+            <Input
+              label="Contact Email"
+                maxLength={254}
+              value={contactEmail}
+              onChange={(e) => setContactEmail(e.target.value)}
+              placeholder="contact@datnguyen.dev"
+            />
+
+            <Input
+              label="Contact Eyebrow"
+                maxLength={60}
+              value={contactEyebrow}
+              onChange={(e) => setContactEyebrow(e.target.value)}
+              placeholder="// INQUIRIES & COLLABORATION"
+            />
+
+            <Input
+              label="Contact Heading"
+                maxLength={60}
+              value={contactHeading}
+              onChange={(e) => setContactHeading(e.target.value)}
+              placeholder="SAY HELLO."
+            />
+
+            <Textarea
+              label="Contact Intro"
+                maxLength={200}
+              value={contactIntro}
+              onChange={(e) => setContactIntro(e.target.value)}
+              rows={2}
+            />
+
+            <div className="flex items-center justify-between border-b-2 border-stone-200 pb-3">
+              <span className="font-display font-bold text-xs uppercase tracking-wider text-stone-600">
+                SOCIAL LINKS ({socialLinks.length})
+              </span>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() =>
+                  setSocialLinks([...socialLinks, { platform: 'website', label: 'New Profile', url: 'https://' }])
+                }
+              >
+                <Plus className="w-3.5 h-3.5" /> ADD LINK
+              </Button>
+            </div>
+
+            <div className="space-y-2">
+              {socialLinks.map((link, idx) => (
+                <div
+                  key={idx}
+                  className="p-3 bg-stone-50 border-2 border-black rounded-[var(--radius-sm)] flex items-center gap-3 shadow-[var(--shadow-neo-sm)]"
+                >
+                  <span className="font-mono text-xs font-bold text-stone-400 w-4">{idx + 1}</span>
+                  <input
+                    type="text"
+                    value={link.platform}
+                    onChange={(e) => {
+                      const copy = [...socialLinks];
+                      copy[idx] = { ...copy[idx], platform: e.target.value };
+                      setSocialLinks(copy);
+                    }}
+                    placeholder="github"
+                    maxLength={24}
+                    title="Platform key (github, linkedin, x...)"
+                    className="px-2 py-1 bg-white border border-black font-mono text-xs rounded w-28"
+                  />
+                  <input
+                    type="text"
+                    value={link.label}
+                    onChange={(e) => {
+                      const copy = [...socialLinks];
+                      copy[idx] = { ...copy[idx], label: e.target.value };
+                      setSocialLinks(copy);
+                    }}
+                    placeholder="GitHub Profile"
+                    maxLength={60}
+                    className="px-2 py-1 bg-white border border-black font-display font-bold text-xs uppercase rounded flex-1"
+                  />
+                  <input
+                    type="text"
+                    value={link.url}
+                    onChange={(e) => {
+                      const copy = [...socialLinks];
+                      copy[idx] = { ...copy[idx], url: e.target.value };
+                      setSocialLinks(copy);
+                    }}
+                    placeholder="https://..."
+                    maxLength={2048}
+                    className="px-2 py-1 bg-white border border-black font-mono text-xs rounded flex-1"
+                  />
+                  <button
+                    onClick={() => setSocialLinks(socialLinks.filter((_, i) => i !== idx))}
+                    className="p-1 hover:bg-[var(--color-coral)] rounded cursor-pointer"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Tab: Journey Chapters */}
+        {activeTab === 'journey' && (
+          <div className="space-y-5 max-w-2xl">
+            <Input
+              label="Journey Eyebrow"
+              value={journeyEyebrow}
+              onChange={(e) => setJourneyEyebrow(e.target.value)}
+              placeholder="// 06. TIMELINE"
+              maxLength={60}
+            />
+
+            <Input
+              label="Journey Heading"
+              value={journeyHeading}
+              onChange={(e) => setJourneyHeading(e.target.value)}
+              placeholder="THE JOURNEY SO FAR"
+              maxLength={60}
+            />
+
+            <Textarea
+              label="Journey Intro"
+              value={journeyIntro}
+              onChange={(e) => setJourneyIntro(e.target.value)}
+              rows={2}
+              maxLength={300}
+            />
+
+            <div className="flex items-center justify-between border-b-2 border-stone-200 pb-3">
+              <span className="font-display font-bold text-xs uppercase tracking-wider text-stone-600">
+                CHAPTERS ({journeyChapters.length})
+              </span>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() =>
+                  setJourneyChapters([
+                    ...journeyChapters,
+                    { type: 'Custom', title: 'NEW CHAPTER', subtitle: '', accent: 'paper' },
+                  ])
+                }
+              >
+                <Plus className="w-3.5 h-3.5" /> ADD CHAPTER
+              </Button>
+            </div>
+
+            <div className="space-y-3">
+              {journeyChapters.map((ch, idx) => (
+                <div
+                  key={idx}
+                  className="p-3 bg-stone-50 border-2 border-black rounded-[var(--radius-sm)] space-y-2 shadow-[var(--shadow-neo-sm)]"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-xs font-bold text-stone-400 w-4">{idx + 1}</span>
+                    <input
+                      type="text"
+                      value={ch.type}
+                      onChange={(e) => {
+                        const copy = [...journeyChapters];
+                        copy[idx] = { ...copy[idx], type: e.target.value };
+                        setJourneyChapters(copy);
+                      }}
+                      placeholder="Work"
+                      title="Matches the experience entry type exactly"
+                      className="px-2 py-1 bg-white border border-black font-mono text-xs rounded w-28"
+                    />
+                    <input
+                      type="text"
+                      value={ch.title}
+                      onChange={(e) => {
+                        const copy = [...journeyChapters];
+                        copy[idx] = { ...copy[idx], title: e.target.value };
+                        setJourneyChapters(copy);
+                      }}
+                      placeholder="WORK EXPERIENCE"
+                      maxLength={60}
+                      className="px-2 py-1 bg-white border border-black font-display font-bold text-xs uppercase rounded flex-1"
+                    />
+                    <select
+                      value={ch.accent}
+                      onChange={(e) => {
+                        const copy = [...journeyChapters];
+                        copy[idx] = { ...copy[idx], accent: e.target.value };
+                        setJourneyChapters(copy);
+                      }}
+                      title="Chapter card color"
+                      className="px-2 py-1 bg-white border border-black font-mono text-xs rounded cursor-pointer"
+                    >
+                      {JOURNEY_ACCENTS.map((a) => (
+                        <option key={a} value={a}>
+                          {a}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={() => setJourneyChapters(journeyChapters.filter((_, i) => i !== idx))}
+                      className="p-1 hover:bg-[var(--color-coral)] rounded cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={ch.subtitle}
+                    onChange={(e) => {
+                      const copy = [...journeyChapters];
+                      copy[idx] = { ...copy[idx], subtitle: e.target.value };
+                      setJourneyChapters(copy);
+                    }}
+                    placeholder="Chapter subtitle"
+                    maxLength={120}
+                    className="w-full px-2 py-1 bg-white border border-black font-body text-xs rounded"
+                  />
+                </div>
+              ))}
+            </div>
+            <p className="text-xs font-body text-stone-600">
+              Type must match the experience entry type exactly (Work, Education, Research, Community, Milestone).
+              Types without a chapter use an uppercase title and paper color.
+            </p>
           </div>
         )}
 
@@ -260,6 +537,7 @@ export default function SettingsClient({ initialGlobals }: SettingsClientProps) 
 
             <Input
               label="Status Tag / Label"
+                maxLength={40}
               value={announcementLabel}
               onChange={(e) => setAnnouncementLabel(e.target.value)}
               placeholder="STATUS: ACTIVE"
@@ -267,6 +545,7 @@ export default function SettingsClient({ initialGlobals }: SettingsClientProps) 
 
             <Textarea
               label="Announcement Text"
+                maxLength={140}
               value={announcementMessage}
               onChange={(e) => setAnnouncementMessage(e.target.value)}
               rows={2}
@@ -275,6 +554,7 @@ export default function SettingsClient({ initialGlobals }: SettingsClientProps) 
 
             <Input
               label="Link Destination URL"
+                maxLength={2048}
               value={announcementLink}
               onChange={(e) => setAnnouncementLink(e.target.value)}
               placeholder="/contact"
@@ -313,6 +593,7 @@ export default function SettingsClient({ initialGlobals }: SettingsClientProps) 
                         setNavLinks(copy);
                       }}
                       className="px-2 py-1 bg-white border border-black font-display font-bold text-xs uppercase rounded w-36"
+                      maxLength={24}
                     />
                     <input
                       type="text"
@@ -323,6 +604,7 @@ export default function SettingsClient({ initialGlobals }: SettingsClientProps) 
                         setNavLinks(copy);
                       }}
                       className="px-2 py-1 bg-white border border-black font-mono text-xs rounded flex-1"
+                      maxLength={2048}
                     />
                   </div>
 
@@ -395,6 +677,7 @@ export default function SettingsClient({ initialGlobals }: SettingsClientProps) 
           <div className="space-y-5 max-w-2xl">
             <Input
               label="Site Title Template"
+                maxLength={80}
               value={siteTitleTemplate}
               onChange={(e) => setSiteTitleTemplate(e.target.value)}
               placeholder="%s | Dat Nguyen"
@@ -403,6 +686,7 @@ export default function SettingsClient({ initialGlobals }: SettingsClientProps) 
 
             <Input
               label="Global Keywords (comma separated)"
+                maxLength={500}
               value={keywordsInput}
               onChange={(e) => setKeywordsInput(e.target.value)}
               placeholder="Next.js, TypeScript, Distributed Systems, Neo-Brutalism"

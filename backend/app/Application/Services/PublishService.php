@@ -134,9 +134,16 @@ class PublishService
     {
         // One current document per public route identity; per-revision history
         // lives in `cms_revisions`, so re-publishing replaces in place.
-        $attributes = $entry->slug !== null
-            ? ['type' => $entry->type, 'locale' => $entry->locale, 'slug' => $entry->slug]
-            : ['type' => $entry->type, 'locale' => $entry->locale, 'key' => $entry->key];
+        // Entries without slug/key (e.g. experience, skills) have no route
+        // identity of their own, so fall back to the entry id — otherwise
+        // every publish of that type would overwrite the same publication.
+        if ($entry->slug !== null) {
+            $attributes = ['type' => $entry->type, 'locale' => $entry->locale, 'slug' => $entry->slug];
+        } elseif ($entry->key !== null) {
+            $attributes = ['type' => $entry->type, 'locale' => $entry->locale, 'key' => $entry->key];
+        } else {
+            $attributes = ['type' => $entry->type, 'locale' => $entry->locale, 'entryId' => (string) $entry->getKey()];
+        }
 
         $values = [
             'entryId' => (string) $entry->getKey(),

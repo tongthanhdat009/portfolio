@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useTransition } from 'react';
+import React, { useEffect, useState, useTransition } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   Upload,
   Search,
@@ -13,24 +14,46 @@ import {
   ShieldAlert,
 } from 'lucide-react';
 import { MediaAsset } from '@/types';
+import type { PagedResult } from '@/lib/cms/service';
+import { useDebouncedValue } from '@/lib/use-debounced-value';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input, Textarea } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
 import { Badge } from '@/components/ui/Badge';
+import { Pagination } from '@/components/ui/Pagination';
 import { addMediaAction, deleteMediaAction } from '@/app/admin/actions';
 
 interface MediaClientProps {
-  initialMedia: MediaAsset[];
+  initialBundle: PagedResult<MediaAsset>;
+  initialSearch: string;
 }
 
-export default function MediaClient({ initialMedia }: MediaClientProps) {
-  const [mediaList, setMediaList] = useState(initialMedia);
-  const [selectedAssetId, setSelectedAssetId] = useState<string>(initialMedia[0]?._id || '');
-  const [search, setSearch] = useState('');
+export default function MediaClient({ initialBundle, initialSearch }: MediaClientProps) {
+  const [bundle, setBundle] = useState(initialBundle);
+  const mediaList = bundle.items;
+  const [selectedAssetId, setSelectedAssetId] = useState<string>(initialBundle.items[0]?._id || '');
+  const [searchInput, setSearchInput] = useState(initialSearch);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [blockedReason, setBlockedReason] = useState('');
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const debouncedSearch = useDebouncedValue(searchInput);
+
+  useEffect(() => {
+    const current = searchParams.get('q') ?? '';
+    if (debouncedSearch !== current) {
+      const sp = new URLSearchParams(searchParams.toString());
+      if (debouncedSearch) sp.set('q', debouncedSearch);
+      else sp.delete('q');
+      sp.delete('page');
+      const qs = sp.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearch]);
 
   // New asset form
   const [uploadFilename, setUploadFilename] = useState('');
@@ -38,12 +61,6 @@ export default function MediaClient({ initialMedia }: MediaClientProps) {
   const [uploadAlt, setUploadAlt] = useState('');
 
   const selectedAsset = mediaList.find((m) => m._id === selectedAssetId) || mediaList[0];
-
-  const filtered = mediaList.filter((m) => {
-    if (!search.trim()) return true;
-    const q = search.toLowerCase();
-    return m.filename.toLowerCase().includes(q) || m.alt.toLowerCase().includes(q);
-  });
 
   const handleUploadSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +75,7 @@ export default function MediaClient({ initialMedia }: MediaClientProps) {
         alt: uploadAlt,
       });
 
-      setMediaList([newAsset, ...mediaList]);
+      setBundle((b) => ({ ...b, items: [newAsset, ...b.items], total: b.total + 1 }));
       setSelectedAssetId(newAsset._id);
       setIsUploadOpen(false);
       setUploadFilename('');
@@ -73,7 +90,11 @@ export default function MediaClient({ initialMedia }: MediaClientProps) {
       const res = await deleteMediaAction(id);
       if (res.success) {
         const remaining = mediaList.filter((m) => m._id !== id);
-        setMediaList(remaining);
+        setBundle((b) => ({
+          ...b,
+          items: b.items.filter((m) => m._id !== id),
+          total: Math.max(0, b.total - 1),
+        }));
         if (selectedAssetId === id) {
           setSelectedAssetId(remaining[0]?._id || '');
         }
@@ -124,18 +145,18 @@ export default function MediaClient({ initialMedia }: MediaClientProps) {
               <input
                 type="text"
                 placeholder="Search assets by filename or alt description..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
                 className="w-full pl-9 pr-3 py-1.5 text-xs font-body bg-stone-50 border border-black rounded"
               />
             </div>
             <span className="font-mono text-xs font-bold text-stone-600">
-              {filtered.length} ASSETS
+              {bundle.total} ASSETS
             </span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {filtered.map((asset) => {
+            {mediaList.map((asset) => {
               const isSelected = asset._id === selectedAssetId;
               return (
                 <div
@@ -148,14 +169,16 @@ export default function MediaClient({ initialMedia }: MediaClientProps) {
                   }`}
                 >
                   <div className="h-28 w-full bg-stone-100 border border-black rounded flex items-center justify-center overflow-hidden mb-2 relative">
-                    <img
-                      src={asset.url}
-                      alt={asset.alt}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as any).style.display = 'none';
-                      }}
-                    />
+                    {asset.url ? (
+                      <img
+                        src={asset.url}
+                        alt={asset.alt}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.target as any).style.display = 'none';
+                        }}
+                      />
+                    ) : null}
                     <span className="text-[10px] font-mono text-stone-400 text-center px-2">
                       {asset.filename}
                     </span>
@@ -176,6 +199,7 @@ export default function MediaClient({ initialMedia }: MediaClientProps) {
               );
             })}
           </div>
+          <Pagination page={bundle.page} totalPages={bundle.lastPage} total={bundle.total} perPage={bundle.perPage} />
         </div>
 
         {/* Right Asset Inspector */}
@@ -191,17 +215,21 @@ export default function MediaClient({ initialMedia }: MediaClientProps) {
                 </h3>
               </div>
 
-              {/* Image Preview */}
-              <div className="h-44 w-full bg-stone-100 border-2 border-black rounded flex items-center justify-center overflow-hidden">
-                <img
-                  src={selectedAsset.url}
-                  alt={selectedAsset.alt}
-                  className="w-full h-full object-contain"
-                  onError={(e) => {
-                    (e.target as any).style.display = 'none';
-                  }}
-                />
-              </div>
+                {/* Image Preview */}
+                <div className="h-44 w-full bg-stone-100 border-2 border-black rounded flex items-center justify-center overflow-hidden">
+                  {selectedAsset.url ? (
+                    <img
+                      src={selectedAsset.url}
+                      alt={selectedAsset.alt}
+                      className="w-full h-full object-contain"
+                      onError={(e) => {
+                        (e.target as any).style.display = 'none';
+                      }}
+                    />
+                  ) : (
+                    <span className="text-xs font-mono text-stone-400">No preview available</span>
+                  )}
+                </div>
 
               {/* Alt Text Box */}
               <div className="space-y-1">
@@ -308,6 +336,7 @@ export default function MediaClient({ initialMedia }: MediaClientProps) {
 
           <Textarea
             label="Alt Description (Mandatory for informative images)"
+            maxLength={125}
             value={uploadAlt}
             onChange={(e) => setUploadAlt(e.target.value)}
             rows={2}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -10,7 +10,8 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, label, helperText, error, id, ...props }, ref) => {
-    const inputId = id || props.name || Math.random().toString(36).substring(2, 7);
+    const autoId = useId().replace(/:/g, '');
+    const inputId = id || props.name || autoId;
 
     return (
       <div className="flex flex-col gap-1.5 w-full">
@@ -55,7 +56,8 @@ export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextArea
 
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ className, label, helperText, error, id, rows = 4, ...props }, ref) => {
-    const inputId = id || props.name || Math.random().toString(36).substring(2, 7);
+    const autoId = useId().replace(/:/g, '');
+    const inputId = id || props.name || autoId;
 
     return (
       <div className="flex flex-col gap-1.5 w-full">
@@ -102,7 +104,8 @@ export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElemen
 
 export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
   ({ className, label, helperText, error, id, options, children, ...props }, ref) => {
-    const inputId = id || props.name || Math.random().toString(36).substring(2, 7);
+    const autoId = useId().replace(/:/g, '');
+    const inputId = id || props.name || autoId;
 
     return (
       <div className="flex flex-col gap-1.5 w-full">

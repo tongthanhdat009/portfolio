@@ -121,22 +121,22 @@ export default async function DashboardPage() {
           className="p-5"
         >
           <div className="flex items-center justify-between text-xs font-mono text-stone-500 mb-2">
-            <span>CONTENT WARNINGS</span>
+            <span>CONTENT ISSUES</span>
             <AlertTriangle className={`w-4 h-4 ${metrics.warningsCount > 0 ? 'text-[var(--color-coral)]' : 'text-stone-400'}`} />
           </div>
           <div className="font-display font-black text-3xl sm:text-4xl text-[var(--color-ink)]">
             {metrics.warningsCount}
           </div>
           <p className="text-xs font-body text-[var(--color-muted-text)] mt-1">
-            {metrics.warningsCount > 0 ? 'Requires attention before release' : 'All audits passing'}
+            {metrics.warningsCount > 0 ? 'Open audit findings (blocking + suggestions)' : 'All audits passing'}
           </p>
         </Card>
       </div>
 
       {/* Main Grid: Left Quick Actions + Content; Right Content Health & Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch lg:h-[calc(100vh-140px)] lg:min-h-[560px]">
         {/* Left Column (2 Cols wide) */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="lg:col-span-2 flex flex-col gap-8 min-h-0">
           {/* Quick Actions */}
           <Card variant="paper" shadow="md" borderWidth="2" className="p-6">
             <h2 className="font-display font-black text-sm uppercase tracking-wider text-[var(--color-ink)] mb-4">
@@ -175,7 +175,7 @@ export default async function DashboardPage() {
           </Card>
 
           {/* Recent Content */}
-          <Card variant="surface" shadow="md" borderWidth="2" className="p-6">
+          <Card variant="surface" shadow="md" borderWidth="2" className="p-6 flex-1 flex flex-col min-h-0">
             <div className="flex items-center justify-between mb-4 border-b-2 border-stone-100 pb-3">
               <div>
                 <h2 className="font-display font-black text-sm uppercase tracking-wider text-[var(--color-ink)]">
@@ -191,9 +191,9 @@ export default async function DashboardPage() {
               </Link>
             </div>
 
-            <div className="divide-y-2 divide-stone-100">
+            <div className="divide-y-2 divide-stone-100 flex-1 overflow-y-auto min-h-[200px] pr-1">
               {recentEntries.slice(0, 6).map((entry) => (
-                <div key={entry._id} className="py-3.5 flex items-center justify-between gap-4">
+                <div key={entry._id} className="py-2.5 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3 min-w-0">
                     <Badge variant={entry.type === 'project' ? 'sun' : entry.type === 'page' ? 'sky' : 'paper'} size="sm">
                       {entry.type}
@@ -212,7 +212,7 @@ export default async function DashboardPage() {
                         {entry.title}
                       </Link>
                       <span className="font-mono text-[11px] text-stone-400">
-                        rev #{entry.revision} · {new Date(entry.updatedAt).toLocaleDateString()}
+                        rev #{entry.revision} · {new Date(entry.updatedAt).toLocaleDateString('en-US')}
                       </span>
                     </div>
                   </div>
@@ -243,9 +243,9 @@ export default async function DashboardPage() {
         </div>
 
         {/* Right Column: Content Health & Activity */}
-        <div className="space-y-8">
+        <div className="flex flex-col gap-8 min-h-0">
           {/* Content Health Checker */}
-          <Card variant="surface" shadow="md" borderWidth="2" className="p-6">
+          <Card variant="surface" shadow="md" borderWidth="2" className="p-6 flex-1 flex flex-col min-h-0">
             <div className="flex items-center justify-between mb-4 border-b-2 border-stone-100 pb-3">
               <div className="flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 text-amber-500" />
@@ -265,11 +265,12 @@ export default async function DashboardPage() {
                 <p className="font-body text-xs text-stone-500 mt-1">No missing alts, broken references or SEO gaps detected.</p>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2 flex-1 overflow-y-auto min-h-[160px] pr-1">
                 {healthIssues.map((issue) => (
                   <div
                     key={issue.id}
-                    className="p-3 bg-stone-50 border-2 border-stone-300 rounded-[var(--radius-sm)] flex flex-col gap-1.5"
+                    className="p-2 bg-stone-50 border-2 border-stone-300 rounded-[var(--radius-sm)] flex flex-col gap-1"
+                    title={issue.description}
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-mono text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300">
@@ -278,7 +279,7 @@ export default async function DashboardPage() {
                       {issue.fixAction && (
                         <Link
                           href={issue.fixAction}
-                          className="font-mono text-xs font-bold text-blue-600 hover:underline flex items-center gap-1"
+                          className="font-mono text-[11px] font-bold text-blue-600 hover:underline flex items-center gap-1"
                         >
                           FIX NOW →
                         </Link>
@@ -287,7 +288,7 @@ export default async function DashboardPage() {
                     <span className="font-display font-bold text-xs text-stone-900">
                       {issue.title}
                     </span>
-                    <p className="font-body text-[11px] text-stone-600 leading-relaxed">
+                    <p className="font-body text-[11px] text-stone-600 leading-snug line-clamp-2">
                       {issue.description}
                     </p>
                   </div>
@@ -297,12 +298,12 @@ export default async function DashboardPage() {
           </Card>
 
           {/* Recent Activity */}
-          <Card variant="surface" shadow="md" borderWidth="2" className="p-6">
+          <Card variant="surface" shadow="md" borderWidth="2" className="p-6 flex-1 flex flex-col min-h-0">
             <h2 className="font-display font-black text-sm uppercase tracking-wider text-[var(--color-ink)] mb-4 border-b-2 border-stone-100 pb-3">
               ACTIVITY STREAM
             </h2>
 
-            <div className="space-y-3.5">
+            <div className="space-y-3.5 flex-1 overflow-y-auto min-h-[160px] pr-1">
               {recentActivity.map((log) => (
                 <div key={log._id} className="flex items-start gap-3 text-xs">
                   <div className="w-2 h-2 rounded-full bg-stone-400 mt-1.5 shrink-0" />
@@ -313,7 +314,7 @@ export default async function DashboardPage() {
                       <span className="font-semibold text-stone-900">{log.targetTitle}</span>
                     </p>
                     <span className="font-mono text-[10px] text-stone-400">
-                      {new Date(log.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · {new Date(log.createdAt).toLocaleDateString()}
+                      {new Date(log.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} · {new Date(log.createdAt).toLocaleDateString('en-US')}
                     </span>
                   </div>
                 </div>

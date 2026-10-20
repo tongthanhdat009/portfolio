@@ -3,19 +3,22 @@
 import React, { useState, useTransition } from 'react';
 import { Plus, Edit2, Trash2, FlaskConical, ExternalLink } from 'lucide-react';
 import { CmsEntry, ExperimentData, ColorAccent } from '@/types';
+import type { PagedResult } from '@/lib/cms/service';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input, Textarea, Select } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
 import { Badge, StatusBadge } from '@/components/ui/Badge';
+import { Pagination } from '@/components/ui/Pagination';
 import { saveDraftAction, createEntryAction, deleteEntryAction, publishEntryAction } from '@/app/admin/actions';
 
 interface ExperimentsClientProps {
-  initialExperiments: CmsEntry<ExperimentData>[];
+  initialBundle: PagedResult<CmsEntry<ExperimentData>>;
 }
 
-export default function ExperimentsClient({ initialExperiments }: ExperimentsClientProps) {
-  const [items, setItems] = useState(initialExperiments);
+export default function ExperimentsClient({ initialBundle }: ExperimentsClientProps) {
+  const [bundle, setBundle] = useState(initialBundle);
+  const items = bundle.items as CmsEntry<ExperimentData>[];
   const [editingExp, setEditingExp] = useState<Partial<CmsEntry<ExperimentData>> | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tagsInput, setTagsInput] = useState('');
@@ -92,7 +95,7 @@ export default function ExperimentsClient({ initialExperiments }: ExperimentsCli
   const handleDelete = (id: string) => {
     startTransition(async () => {
       await deleteEntryAction(id);
-      setItems(items.filter((i) => i._id !== id));
+      setBundle((b) => ({ ...b, items: b.items.filter((i) => i._id !== id), total: Math.max(0, b.total - 1) }));
     });
   };
 
@@ -146,7 +149,7 @@ export default function ExperimentsClient({ initialExperiments }: ExperimentsCli
 
             <div className="flex items-center justify-between pt-3 border-t border-stone-100">
               <span className="font-mono text-[11px] text-stone-500">
-                rev #{exp.revision} · {new Date(exp.updatedAt).toLocaleDateString()}
+                rev #{exp.revision} · {new Date(exp.updatedAt).toLocaleDateString('en-US')}
               </span>
               <div className="flex items-center gap-2">
                 <Button variant="secondary" size="sm" onClick={() => handleEdit(exp)}>
@@ -164,6 +167,8 @@ export default function ExperimentsClient({ initialExperiments }: ExperimentsCli
         ))}
       </div>
 
+      <Pagination page={bundle.page} totalPages={bundle.lastPage} total={bundle.total} perPage={bundle.perPage} />
+
       {/* Modal */}
       <Modal
         isOpen={isModalOpen}
@@ -176,6 +181,7 @@ export default function ExperimentsClient({ initialExperiments }: ExperimentsCli
             <div className="grid grid-cols-2 gap-4">
               <Input
                 label="Title"
+                maxLength={80}
                 value={editingExp.data.title || ''}
                 onChange={(e) =>
                   setEditingExp({
@@ -188,6 +194,7 @@ export default function ExperimentsClient({ initialExperiments }: ExperimentsCli
               />
               <Input
                 label="URL Slug"
+                maxLength={80}
                 value={editingExp.data.slug || ''}
                 onChange={(e) =>
                   setEditingExp({
@@ -237,6 +244,7 @@ export default function ExperimentsClient({ initialExperiments }: ExperimentsCli
 
             <Textarea
               label="Short Summary"
+                maxLength={300}
               value={editingExp.data.summary || ''}
               onChange={(e) =>
                 setEditingExp({
@@ -249,6 +257,7 @@ export default function ExperimentsClient({ initialExperiments }: ExperimentsCli
 
             <Textarea
               label="Objective & Research Hypothesis"
+                maxLength={500}
               value={editingExp.data.objective || ''}
               onChange={(e) =>
                 setEditingExp({
@@ -261,6 +270,7 @@ export default function ExperimentsClient({ initialExperiments }: ExperimentsCli
 
             <Textarea
               label="How It Works (Technical Process)"
+                maxLength={2000}
               value={editingExp.data.howItWorks || ''}
               onChange={(e) =>
                 setEditingExp({
@@ -273,6 +283,7 @@ export default function ExperimentsClient({ initialExperiments }: ExperimentsCli
 
             <Input
               label="Tags (comma separated)"
+                maxLength={300}
               value={tagsInput}
               onChange={(e) => setTagsInput(e.target.value)}
               placeholder="e.g. Rust, WebAssembly, Vector Search"

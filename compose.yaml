@@ -24,21 +24,19 @@ services:
     container_name: portfolio-backend
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "9000:9000"
     env_file:
       - ./backend/.env
     environment:
       MONGODB_URI: "mongodb://admin:portfolio123@mongo:27017/portfolio_cms?authSource=admin"
-      SANCTUM_STATEFUL_DOMAINS: "localhost:3000,localhost:3001,localhost:8000"
+      SANCTUM_STATEFUL_DOMAINS: "localhost:3000,localhost:3001,localhost:9000"
       CORS_ALLOWED_ORIGINS: "http://localhost:3000,http://localhost:3001"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
       mongo:
         condition: service_healthy
-      s3:
-        condition: service_started
-    command: ["sh", "-c", "cd public && exec php -S 0.0.0.0:8000 ../vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php"]
+    command: ["sh", "-c", "cd public && exec php -S 0.0.0.0:9000 ../vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php"]
 
   # S3-compatible storage for local media dev (spec 5.1; Moto S3 mock).
   # MinIO left Docker Hub and LocalStack now requires an auth token, Moto runs free.

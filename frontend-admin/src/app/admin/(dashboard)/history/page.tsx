@@ -1,12 +1,29 @@
-import { getEntries, getRevisions } from '@/lib/cms/service';
+import { getEntries, getRevisionsPaged } from '@/lib/cms/service';
 import HistoryClient from './HistoryClient';
 
 export const dynamic = 'force-dynamic';
 
-export default async function HistoryPage() {
-  const entries = await getEntries();
-  const perEntry = await Promise.all(entries.map((e) => getRevisions(e._id)));
-  const allRevs = perEntry.flat();
+const PER_PAGE = 10;
 
-  return <HistoryClient entries={entries} initialRevisions={allRevs as any} />;
+export default async function HistoryPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ entry?: string; revPage?: string }>;
+}) {
+  const sp = (await searchParams) ?? {};
+  const entries = await getEntries({ sort: 'updated' });
+  const entryId = sp.entry || entries[0]?._id || '';
+  const revPage = Math.max(1, parseInt(sp.revPage || '1', 10) || 1);
+  const revisionsBundle = entryId
+    ? await getRevisionsPaged(entryId, { page: revPage, perPage: PER_PAGE })
+    : { items: [], total: 0, page: 1, perPage: PER_PAGE, lastPage: 1 };
+
+  return (
+    <HistoryClient
+      key={`${entryId}-${revPage}`}
+      entries={entries}
+      initialEntryId={entryId}
+      revisionsBundle={revisionsBundle}
+    />
+  );
 }

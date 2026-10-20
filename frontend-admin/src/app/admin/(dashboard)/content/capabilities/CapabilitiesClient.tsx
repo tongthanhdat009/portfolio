@@ -3,19 +3,22 @@
 import React, { useState, useTransition } from 'react';
 import { Plus, Edit2, Trash2, Cpu, Save } from 'lucide-react';
 import { CmsEntry, CapabilityData, ColorAccent } from '@/types';
+import type { PagedResult } from '@/lib/cms/service';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input, Textarea, Select } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
 import { Badge } from '@/components/ui/Badge';
+import { Pagination } from '@/components/ui/Pagination';
 import { saveDraftAction, createEntryAction, deleteEntryAction, publishEntryAction } from '@/app/admin/actions';
 
 interface CapabilitiesClientProps {
-  initialCapabilities: CmsEntry<CapabilityData>[];
+  initialBundle: PagedResult<CmsEntry<CapabilityData>>;
 }
 
-export default function CapabilitiesClient({ initialCapabilities }: CapabilitiesClientProps) {
-  const [capabilities, setCapabilities] = useState(initialCapabilities);
+export default function CapabilitiesClient({ initialBundle }: CapabilitiesClientProps) {
+  const [bundle, setBundle] = useState(initialBundle);
+  const capabilities = bundle.items as CmsEntry<CapabilityData>[];
   const [editingCap, setEditingCap] = useState<Partial<CmsEntry<CapabilityData>> | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -74,7 +77,11 @@ export default function CapabilitiesClient({ initialCapabilities }: Capabilities
   const handleDelete = (id: string) => {
     startTransition(async () => {
       await deleteEntryAction(id);
-      setCapabilities(capabilities.filter((c) => c._id !== id));
+      setBundle((b) => ({
+        ...b,
+        items: b.items.filter((c) => c._id !== id),
+        total: Math.max(0, b.total - 1),
+      }));
     });
   };
 
@@ -134,6 +141,8 @@ export default function CapabilitiesClient({ initialCapabilities }: Capabilities
         ))}
       </div>
 
+      <Pagination page={bundle.page} totalPages={bundle.lastPage} total={bundle.total} perPage={bundle.perPage} />
+
       {/* Edit/Create Modal */}
       <Modal
         isOpen={isModalOpen}
@@ -145,6 +154,7 @@ export default function CapabilitiesClient({ initialCapabilities }: Capabilities
             <div className="grid grid-cols-2 gap-4">
               <Input
                 label="Capability Code"
+                maxLength={12}
                 value={editingCap.data.code || ''}
                 onChange={(e) =>
                   setEditingCap({
@@ -176,6 +186,7 @@ export default function CapabilitiesClient({ initialCapabilities }: Capabilities
 
             <Input
               label="Capability Title"
+                maxLength={60}
               value={editingCap.data.title || ''}
               onChange={(e) =>
                 setEditingCap({
@@ -188,6 +199,7 @@ export default function CapabilitiesClient({ initialCapabilities }: Capabilities
 
             <Textarea
               label="Description"
+                maxLength={160}
               value={editingCap.data.description || ''}
               onChange={(e) =>
                 setEditingCap({

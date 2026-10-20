@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/Badge';
 
 interface LabSectionProps {
   experiments: Experiment[];
+  header?: { eyebrow: string; headline: string };
 }
 
 const statusBadgeStyles: Record<string, string> = {
@@ -17,7 +18,10 @@ const statusBadgeStyles: Record<string, string> = {
   Archived: 'bg-[#E9DFC9] text-[#5B5751]',
 };
 
-export const LabSection: React.FC<LabSectionProps> = ({ experiments }) => {
+export const LabSection: React.FC<LabSectionProps> = ({
+  experiments,
+  header = { eyebrow: '// 07. EXPERIMENTS', headline: 'THE DIGITAL LAB' },
+}) => {
   return (
     <section
       id="lab"
@@ -30,10 +34,10 @@ export const LabSection: React.FC<LabSectionProps> = ({ experiments }) => {
           <div className="flex flex-col gap-2">
             <span className="font-mono text-xs font-bold uppercase tracking-widest text-[#5B5751] flex items-center gap-1.5">
               <FlaskConical size={14} />
-              <span>// 07. EXPERIMENTS</span>
+              <span>{header.eyebrow}</span>
             </span>
             <h2 className="font-display font-extrabold text-3xl md:text-5xl text-[#111111] uppercase tracking-tight">
-              THE DIGITAL LAB
+              {header.headline}
             </h2>
           </div>
           <Link

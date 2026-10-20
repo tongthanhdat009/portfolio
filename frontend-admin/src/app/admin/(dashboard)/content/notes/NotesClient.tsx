@@ -3,19 +3,22 @@
 import React, { useState, useTransition } from 'react';
 import { Plus, Edit2, Trash2, BookOpen, Clock, FileText } from 'lucide-react';
 import { CmsEntry, NoteData } from '@/types';
+import type { PagedResult } from '@/lib/cms/service';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input, Textarea, Select } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
 import { Badge, StatusBadge } from '@/components/ui/Badge';
+import { Pagination } from '@/components/ui/Pagination';
 import { saveDraftAction, createEntryAction, deleteEntryAction, publishEntryAction } from '@/app/admin/actions';
 
 interface NotesClientProps {
-  initialNotes: CmsEntry<NoteData>[];
+  initialBundle: PagedResult<CmsEntry<NoteData>>;
 }
 
-export default function NotesClient({ initialNotes }: NotesClientProps) {
-  const [notes, setNotes] = useState(initialNotes);
+export default function NotesClient({ initialBundle }: NotesClientProps) {
+  const [bundle, setBundle] = useState(initialBundle);
+  const notes = bundle.items as CmsEntry<NoteData>[];
   const [editingNote, setEditingNote] = useState<Partial<CmsEntry<NoteData>> | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tagsInput, setTagsInput] = useState('');
@@ -97,7 +100,7 @@ export default function NotesClient({ initialNotes }: NotesClientProps) {
   const handleDelete = (id: string) => {
     startTransition(async () => {
       await deleteEntryAction(id);
-      setNotes(notes.filter((n) => n._id !== id));
+      setBundle((b) => ({ ...b, items: b.items.filter((n) => n._id !== id), total: Math.max(0, b.total - 1) }));
     });
   };
 
@@ -174,6 +177,8 @@ export default function NotesClient({ initialNotes }: NotesClientProps) {
         ))}
       </div>
 
+      <Pagination page={bundle.page} totalPages={bundle.lastPage} total={bundle.total} perPage={bundle.perPage} />
+
       {/* Modal */}
       <Modal
         isOpen={isModalOpen}
@@ -186,6 +191,7 @@ export default function NotesClient({ initialNotes }: NotesClientProps) {
             <div className="grid grid-cols-2 gap-4">
               <Input
                 label="Article Title"
+                maxLength={80}
                 value={editingNote.data.title || ''}
                 onChange={(e) =>
                   setEditingNote({
@@ -198,6 +204,7 @@ export default function NotesClient({ initialNotes }: NotesClientProps) {
               />
               <Input
                 label="URL Slug"
+                maxLength={80}
                 value={editingNote.data.slug || ''}
                 onChange={(e) =>
                   setEditingNote({
@@ -213,6 +220,7 @@ export default function NotesClient({ initialNotes }: NotesClientProps) {
             <div className="grid grid-cols-2 gap-4">
               <Input
                 label="Category"
+                maxLength={40}
                 value={editingNote.data.category || ''}
                 onChange={(e) =>
                   setEditingNote({
@@ -224,6 +232,7 @@ export default function NotesClient({ initialNotes }: NotesClientProps) {
               />
               <Input
                 label="Reading Time Estimate"
+                maxLength={20}
                 value={editingNote.data.readTime || ''}
                 onChange={(e) =>
                   setEditingNote({
@@ -237,6 +246,7 @@ export default function NotesClient({ initialNotes }: NotesClientProps) {
 
             <Textarea
               label="Article Excerpt / Abstract"
+                maxLength={300}
               value={editingNote.data.excerpt || ''}
               onChange={(e) =>
                 setEditingNote({
@@ -258,6 +268,7 @@ export default function NotesClient({ initialNotes }: NotesClientProps) {
 
             <Input
               label="Tags (comma separated)"
+                maxLength={300}
               value={tagsInput}
               onChange={(e) => setTagsInput(e.target.value)}
               placeholder="e.g. Distributed Systems, Kafka, Architecture"

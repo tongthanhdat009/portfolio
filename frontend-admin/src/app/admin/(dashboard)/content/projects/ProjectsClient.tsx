@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useTransition } from 'react';
+import React, { useEffect, useState, useTransition } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   Plus,
   Search,
@@ -17,51 +17,79 @@ import {
   Layers,
   CheckCircle2,
   Eye,
+  Undo2,
+  FileText,
 } from 'lucide-react';
 import { CmsEntry, ProjectData } from '@/types';
+import type { PagedResult } from '@/lib/cms/service';
+import { useDebouncedValue } from '@/lib/use-debounced-value';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge, StatusBadge } from '@/components/ui/Badge';
 import { Modal } from '@/components/ui/Modal';
+import { Pagination } from '@/components/ui/Pagination';
 import {
   archiveEntryAction,
   deleteEntryAction,
   createEntryAction,
   publishEntryAction,
+  restoreEntryAction,
+  syncGithubAction,
+  importCvAction,
 } from '@/app/admin/actions';
 
 interface ProjectsClientProps {
-  initialProjects: CmsEntry<ProjectData>[];
+  initialBundle: PagedResult<CmsEntry<ProjectData>>;
+  initialStatus: string;
+  initialSearch: string;
+  initialCategory: string;
 }
 
-export default function ProjectsClient({ initialProjects }: ProjectsClientProps) {
-  const [projects, setProjects] = useState(initialProjects);
-  const [activeTab, setActiveTab] = useState<'all' | 'published' | 'draft' | 'archived'>('all');
-  const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('all');
+const VALID_TABS = ['all', 'published', 'draft', 'archived'] as const;
+
+export default function ProjectsClient({
+  initialBundle,
+  initialStatus,
+  initialSearch,
+  initialCategory,
+}: ProjectsClientProps) {
+  const [bundle, setBundle] = useState(initialBundle);
+  const projects = bundle.items as CmsEntry<ProjectData>[];
+  const [searchInput, setSearchInput] = useState(initialSearch);
   const [deleteTarget, setDeleteTarget] = useState<CmsEntry | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [syncMsg, setSyncMsg] = useState('');
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  // Filter logic
-  const filtered = projects.filter((p) => {
-    if (activeTab === 'published' && p.status !== 'published') return false;
-    if (activeTab === 'draft' && p.status !== 'draft') return false;
-    if (activeTab === 'archived' && p.status !== 'archived') return false;
-    if (activeTab === 'all' && p.status === 'archived') return false; // Hide archived by default on 'all'
-
-    if (category !== 'all' && p.data?.category !== category) return false;
-
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      const matchTitle = p.title.toLowerCase().includes(q);
-      const matchSlug = p.slug?.toLowerCase().includes(q);
-      const matchTags = p.data?.tags?.some((t: string) => t.toLowerCase().includes(q));
-      if (!matchTitle && !matchSlug && !matchTags) return false;
+  const pushParams = (updates: Record<string, string | undefined>) => {
+    const sp = new URLSearchParams(searchParams.toString());
+    for (const [k, v] of Object.entries(updates)) {
+      if (v === undefined || v === '' || v === 'all') sp.delete(k);
+      else sp.set(k, v);
     }
+    sp.delete('page');
+    const qs = sp.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname);
+  };
 
-    return true;
-  });
+  const debouncedSearch = useDebouncedValue(searchInput);
+  useEffect(() => {
+    const current = searchParams.get('q') ?? '';
+    if (debouncedSearch !== current) {
+      const sp = new URLSearchParams(searchParams.toString());
+      if (debouncedSearch) sp.set('q', debouncedSearch);
+      else sp.delete('q');
+      sp.delete('page');
+      const qs = sp.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearch]);
+
+  const setItems = (items: CmsEntry<ProjectData>[], totalDelta = 0) =>
+    setBundle((b) => ({ ...b, items, total: b.total + totalDelta }));
 
   const handleDuplicate = (project: CmsEntry<ProjectData>) => {
     startTransition(async () => {
@@ -84,16 +112,74 @@ export default function ProjectsClient({ initialProjects }: ProjectsClientProps)
       };
 
       const created = await createEntryAction(copy);
-      setProjects([created, ...projects]);
+      setItems([created as CmsEntry<ProjectData>, ...projects], 1);
       router.refresh();
+    });
+  };
+
+  const handleSyncGithub = () => {
+    startTransition(async () => {
+      setSyncMsg('Syncing GitHub repositories…');
+      try {
+        const res = await syncGithubAction();
+        const parts = [`${res.created} created`, `${res.updated} updated`, `${res.skipped} skipped`];
+        if (res.privateSkipped > 0) {
+          parts.push(`${res.privateSkipped} private skipped`);
+        }
+        if (res.coversUploaded > 0) {
+          parts.push(`${res.coversUploaded} covers uploaded`);
+        }
+        if (res.failed.length > 0) {
+          parts.push(`${res.failed.length} failed (${res.failed.map((f) => f.repo).join(', ')})`);
+        }
+        const updatedById = new Map(res.updatedEntries.map((e) => [e._id, e]));
+        setItems(
+          [...res.createdEntries, ...projects.map((p) => updatedById.get(p._id) ?? p)] as CmsEntry<ProjectData>[],
+          res.createdEntries.length
+        );
+        setSyncMsg(`GitHub sync done: ${parts.join(', ')} — new entries saved as drafts.`);
+        router.refresh();
+      } catch (err) {
+        setSyncMsg(`GitHub sync error: ${(err as Error).message}`);
+      }
     });
   };
 
   const handleArchive = (id: string) => {
     startTransition(async () => {
       const updated = await archiveEntryAction(id);
-      setProjects(projects.map((p) => (p._id === id ? updated : p)));
+      setItems(projects.map((p) => (p._id === id ? updated : p)) as CmsEntry<ProjectData>[]);
       router.refresh();
+    });
+  };
+
+  const handleRestore = (id: string) => {
+    startTransition(async () => {
+      const updated = await restoreEntryAction(id);
+      setItems(projects.map((p) => (p._id === id ? updated : p)) as CmsEntry<ProjectData>[]);
+      router.refresh();
+    });
+  };
+
+  const handleImportCv = () => {
+    startTransition(async () => {
+      setSyncMsg('Importing CV data…');
+      try {
+        const res = await importCvAction();
+        const parts = [
+          `${res.projectsCreated} projects`,
+          `${res.experienceCreated} experience`,
+          `${res.skillsCreated} skills`,
+        ];
+        if (res.globalsUpdated) parts.push('site settings updated');
+        if (res.failed.length > 0) {
+          parts.push(`${res.failed.length} failed (${res.failed.map((f) => f.item).join(', ')})`);
+        }
+        setSyncMsg(`CV import done: ${parts.join(', ')} — all saved as drafts.`);
+        router.refresh();
+      } catch (err) {
+        setSyncMsg(`CV import error: ${(err as Error).message}`);
+      }
     });
   };
 
@@ -101,7 +187,7 @@ export default function ProjectsClient({ initialProjects }: ProjectsClientProps)
     if (!deleteTarget) return;
     startTransition(async () => {
       await deleteEntryAction(deleteTarget._id);
-      setProjects(projects.filter((p) => p._id !== deleteTarget._id));
+      setItems(projects.filter((p) => p._id !== deleteTarget._id), -1);
       setDeleteTarget(null);
       router.refresh();
     });
@@ -135,24 +221,51 @@ export default function ProjectsClient({ initialProjects }: ProjectsClientProps)
           </p>
         </div>
 
-        <Link href="/admin/content/projects/new">
-          <Button variant="primary" size="lg">
-            <Plus className="w-4 h-4" />
-            NEW PROJECT
+        <div className="flex items-center gap-3">
+          <Button
+            variant="secondary"
+            size="lg"
+            onClick={handleSyncGithub}
+            isLoading={isPending}
+          >
+            <RefreshCw className="w-4 h-4" />
+            SYNC GITHUB
           </Button>
-        </Link>
+          <Button
+            variant="secondary"
+            size="lg"
+            onClick={handleImportCv}
+            isLoading={isPending}
+          >
+            <FileText className="w-4 h-4" />
+            IMPORT CV
+          </Button>
+          <Link href="/admin/content/projects/new">
+            <Button variant="primary" size="lg">
+              <Plus className="w-4 h-4" />
+              NEW PROJECT
+            </Button>
+          </Link>
+        </div>
       </div>
+
+      {syncMsg && (
+        <div className="p-3 bg-stone-100 border-2 border-stone-300 rounded-[var(--radius-sm)] font-mono text-xs font-bold text-stone-700 flex items-center gap-2">
+          <RefreshCw className="w-3.5 h-3.5 shrink-0" />
+          {syncMsg}
+        </div>
+      )}
 
       {/* Filter and Tab Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[var(--color-surface)] p-4 rounded-[var(--radius-md)] border-2 border-[var(--color-ink)] shadow-[var(--shadow-neo-sm)]">
         {/* Status Tabs */}
         <div className="flex items-center gap-1.5 overflow-x-auto">
-          {(['all', 'published', 'draft', 'archived'] as const).map((tab) => (
+          {VALID_TABS.map((tab) => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => pushParams({ status: tab })}
               className={`px-3 py-1.5 rounded-[var(--radius-sm)] font-display text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                activeTab === tab
+                initialStatus === tab
                   ? 'bg-[var(--color-sun)] text-[var(--color-ink)] border-2 border-[var(--color-ink)] shadow-[var(--shadow-neo-active)]'
                   : 'text-stone-600 hover:bg-[var(--color-paper)] border-2 border-transparent'
               }`}
@@ -169,15 +282,15 @@ export default function ProjectsClient({ initialProjects }: ProjectsClientProps)
             <input
               type="text"
               placeholder="Search title, slug, tags..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
               className="w-full pl-9 pr-3 py-1.5 text-xs font-body bg-stone-50 border-2 border-[var(--color-ink)] rounded-[var(--radius-sm)] focus:outline-none focus:ring-1 focus:ring-blue-600"
             />
           </div>
 
           <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            value={initialCategory}
+            onChange={(e) => pushParams({ category: e.target.value })}
             className="px-3 py-1.5 text-xs font-body font-semibold bg-stone-50 border-2 border-[var(--color-ink)] rounded-[var(--radius-sm)] cursor-pointer"
           >
             {categories.map((c) => (
@@ -191,7 +304,7 @@ export default function ProjectsClient({ initialProjects }: ProjectsClientProps)
 
       {/* Projects Table / Card List */}
       <Card variant="surface" shadow="md" borderWidth="2" className="overflow-hidden">
-        {filtered.length === 0 ? (
+        {projects.length === 0 ? (
           <div className="py-16 text-center space-y-3">
             <div className="w-12 h-12 rounded-[var(--radius-md)] bg-[var(--color-paper)] border-2 border-[var(--color-ink)] shadow-[var(--shadow-neo-sm)] flex items-center justify-center mx-auto text-xl">
               📂
@@ -202,7 +315,7 @@ export default function ProjectsClient({ initialProjects }: ProjectsClientProps)
             <p className="font-body text-xs text-[var(--color-muted-text)] max-w-sm mx-auto">
               No entries match the active filter or search query. Try clearing filters or create a new project.
             </p>
-            <Link href="/admin/content/projects/new">
+          <Link href="/admin/content/projects/new">
               <Button variant="primary" size="sm" className="mt-2">
                 CREATE FIRST PROJECT
               </Button>
@@ -222,7 +335,7 @@ export default function ProjectsClient({ initialProjects }: ProjectsClientProps)
                 </tr>
               </thead>
               <tbody className="divide-y-2 divide-stone-100 text-sm font-body">
-                {filtered.map((project) => (
+                {projects.map((project) => (
                   <tr key={project._id} className="hover:bg-amber-50/40 transition-colors">
                     {/* Title & info */}
                     <td className="py-3.5 px-4">
@@ -274,7 +387,7 @@ export default function ProjectsClient({ initialProjects }: ProjectsClientProps)
 
                     {/* Updated */}
                     <td className="py-3.5 px-4 font-mono text-xs text-stone-500">
-                      {new Date(project.updatedAt).toLocaleDateString()}
+                      {new Date(project.updatedAt).toLocaleDateString('en-US')}
                     </td>
 
                     {/* Actions */}
@@ -304,13 +417,22 @@ export default function ProjectsClient({ initialProjects }: ProjectsClientProps)
                             <Archive className="w-3.5 h-3.5 text-stone-600" />
                           </button>
                         ) : (
-                          <button
-                            onClick={() => setDeleteTarget(project)}
-                            className="p-1.5 rounded-[var(--radius-sm)] border-2 border-[var(--color-ink)] bg-white hover:bg-[var(--color-coral)] transition-all cursor-pointer"
-                            title="Delete permanently"
-                          >
-                            <Trash2 className="w-3.5 h-3.5 text-[var(--color-negative)]" />
-                          </button>
+                          <>
+                            <button
+                              onClick={() => handleRestore(project._id)}
+                              className="p-1.5 rounded-[var(--radius-sm)] border-2 border-[var(--color-ink)] bg-white hover:bg-[var(--color-lime)] transition-all cursor-pointer"
+                              title="Restore to draft"
+                            >
+                              <Undo2 className="w-3.5 h-3.5 text-stone-700" />
+                            </button>
+                            <button
+                              onClick={() => setDeleteTarget(project)}
+                              className="p-1.5 rounded-[var(--radius-sm)] border-2 border-[var(--color-ink)] bg-white hover:bg-[var(--color-coral)] transition-all cursor-pointer"
+                              title="Delete permanently"
+                            >
+                              <Trash2 className="w-3.5 h-3.5 text-[var(--color-negative)]" />
+                            </button>
+                          </>
                         )}
                       </div>
                     </td>
@@ -318,6 +440,16 @@ export default function ProjectsClient({ initialProjects }: ProjectsClientProps)
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+        {projects.length > 0 && (
+          <div className="px-4 pb-4">
+            <Pagination
+              page={bundle.page}
+              totalPages={bundle.lastPage}
+              total={bundle.total}
+              perPage={bundle.perPage}
+            />
           </div>
         )}
       </Card>

@@ -39,9 +39,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ settings }) => {
           </div>
 
           {/* Headline */}
-          <h2 className="font-display font-black text-5xl sm:text-7xl md:text-8xl lg:text-9xl text-[#111111] uppercase tracking-tighter leading-[0.92]">
-            LET&apos;S MAKE <br />
-            IT REAL.
+          <h2 className="font-display font-black text-[clamp(1.75rem,8vw,4.75rem)] whitespace-nowrap text-[#111111] uppercase tracking-tighter leading-[0.92]">
+            LET&apos;S MAKE IT REAL.
           </h2>
 
           {/* Description */}

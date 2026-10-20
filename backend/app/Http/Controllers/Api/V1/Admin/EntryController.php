@@ -33,19 +33,40 @@ class EntryController extends Controller
 
         $limit = min((int) $request->input('limit', 20), 100);
 
-        $query = CmsEntry::query()->orderBy('updated_at', 'desc');
+        $query = CmsEntry::query();
 
-        foreach (['type', 'status', 'locale'] as $filter) {
+        if ($request->input('sort') === 'order') {
+            $query->orderBy('sortOrder', 'asc')->orderBy('updated_at', 'desc');
+        } else {
+            $query->orderBy('updated_at', 'desc');
+        }
+
+        foreach (['type', 'locale'] as $filter) {
             if ($request->filled($filter)) {
                 $query->where($filter, $request->input($filter));
             }
+        }
+
+        $status = $request->input('status');
+        if (is_array($status)) {
+            $query->whereIn('status', array_values($status));
+        } elseif ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        if ($request->filled('category')) {
+            $cat = (string) $request->input('category');
+            $query->where(function ($inner) use ($cat) {
+                $inner->where('data.category', $cat)->orWhere('data.type', $cat);
+            });
         }
 
         if ($request->filled('q')) {
             $q = (string) $request->input('q');
             $query->where(function ($inner) use ($q) {
                 $inner->where('title', 'like', "%{$q}%")
-                    ->orWhere('slug', 'like', "%{$q}%");
+                    ->orWhere('slug', 'like', "%{$q}%")
+                    ->orWhere('data.tags', 'regexp', '/'.preg_quote($q, '/').'/i');
             });
         }
 

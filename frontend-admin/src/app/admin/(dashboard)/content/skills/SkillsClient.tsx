@@ -1,31 +1,43 @@
 'use client';
 
 import React, { useState, useTransition } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Plus, Edit2, Trash2, Wrench, Star } from 'lucide-react';
 import { CmsEntry, TechnologyData, TechCategory } from '@/types';
+import type { PagedResult } from '@/lib/cms/service';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input, Select } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
 import { Badge } from '@/components/ui/Badge';
 import { saveDraftAction, createEntryAction, deleteEntryAction, publishEntryAction } from '@/app/admin/actions';
+import { Pagination } from '@/components/ui/Pagination';
 
 interface SkillsClientProps {
-  initialSkills: CmsEntry<TechnologyData>[];
+  initialBundle: PagedResult<CmsEntry<TechnologyData>>;
+  initialCategory: string;
 }
 
 const CATEGORIES: TechCategory[] = ['Languages', 'Frontend', 'Backend', 'Data', 'AI', 'Tools'];
 
-export default function SkillsClient({ initialSkills }: SkillsClientProps) {
-  const [skills, setSkills] = useState(initialSkills);
-  const [selectedCategory, setSelectedCategory] = useState<TechCategory | 'All'>('All');
+export default function SkillsClient({ initialBundle, initialCategory }: SkillsClientProps) {
+  const [bundle, setBundle] = useState(initialBundle);
+  const skills = bundle.items as CmsEntry<TechnologyData>[];
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [editingSkill, setEditingSkill] = useState<Partial<CmsEntry<TechnologyData>> | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
-  const filtered = skills.filter((s) =>
-    selectedCategory === 'All' ? true : s.data?.category === selectedCategory
-  );
+  const setCategoryParam = (cat: string) => {
+    const sp = new URLSearchParams(searchParams.toString());
+    if (!cat || cat === 'All') sp.delete('category');
+    else sp.set('category', cat);
+    sp.delete('page');
+    const qs = sp.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname);
+  };
 
   const handleNew = () => {
     setEditingSkill({
@@ -35,7 +47,7 @@ export default function SkillsClient({ initialSkills }: SkillsClientProps) {
       sortOrder: skills.length + 1,
       data: {
         name: '',
-        category: selectedCategory === 'All' ? 'Languages' : selectedCategory,
+        category: (initialCategory === 'All' ? 'Languages' : initialCategory) as TechCategory,
         featured: true,
         order: skills.length + 1,
         context: '',
@@ -80,7 +92,7 @@ export default function SkillsClient({ initialSkills }: SkillsClientProps) {
   const handleDelete = (id: string) => {
     startTransition(async () => {
       await deleteEntryAction(id);
-      setSkills(skills.filter((s) => s._id !== id));
+      setBundle((b) => ({ ...b, items: b.items.filter((s) => s._id !== id), total: Math.max(0, b.total - 1) }));
     });
   };
 
@@ -107,28 +119,27 @@ export default function SkillsClient({ initialSkills }: SkillsClientProps) {
       {/* Category Filter Pills */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2">
         <button
-          onClick={() => setSelectedCategory('All')}
+          onClick={() => setCategoryParam('All')}
           className={`px-3 py-1.5 rounded-[var(--radius-sm)] font-display text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-            selectedCategory === 'All'
+            initialCategory === 'All'
               ? 'bg-[var(--color-sun)] text-[var(--color-ink)] border-2 border-[var(--color-ink)] shadow-[var(--shadow-neo-sm)]'
               : 'bg-white border-2 border-stone-300 text-stone-700'
           }`}
         >
-          ALL ({skills.length})
+          ALL
         </button>
         {CATEGORIES.map((cat) => {
-          const count = skills.filter((s) => s.data?.category === cat).length;
           return (
             <button
               key={cat}
-              onClick={() => setSelectedCategory(cat)}
+              onClick={() => setCategoryParam(cat)}
               className={`px-3 py-1.5 rounded-[var(--radius-sm)] font-display text-xs font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
-                selectedCategory === cat
+                initialCategory === cat
                   ? 'bg-[var(--color-sun)] text-[var(--color-ink)] border-2 border-[var(--color-ink)] shadow-[var(--shadow-neo-sm)]'
                   : 'bg-white border-2 border-stone-300 text-stone-700'
               }`}
             >
-              {cat} ({count})
+              {cat}
             </button>
           );
         })}
@@ -136,7 +147,7 @@ export default function SkillsClient({ initialSkills }: SkillsClientProps) {
 
       {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filtered.map((skill) => (
+        {skills.map((skill) => (
           <Card key={skill._id} variant="surface" shadow="sm" borderWidth="2" className="p-4 flex items-center justify-between">
             <div className="min-w-0">
               <div className="flex items-center gap-2">
@@ -175,6 +186,8 @@ export default function SkillsClient({ initialSkills }: SkillsClientProps) {
         ))}
       </div>
 
+      <Pagination page={bundle.page} totalPages={bundle.lastPage} total={bundle.total} perPage={bundle.perPage} />
+
       {/* Modal */}
       <Modal
         isOpen={isModalOpen}
@@ -185,6 +198,7 @@ export default function SkillsClient({ initialSkills }: SkillsClientProps) {
           <div className="space-y-4">
             <Input
               label="Technology Name"
+                maxLength={40}
               value={editingSkill.data.name || ''}
               onChange={(e) =>
                 setEditingSkill({
@@ -210,6 +224,7 @@ export default function SkillsClient({ initialSkills }: SkillsClientProps) {
 
             <Input
               label="Usage Context / Subtitle"
+                maxLength={120}
               value={editingSkill.data.context || ''}
               onChange={(e) =>
                 setEditingSkill({

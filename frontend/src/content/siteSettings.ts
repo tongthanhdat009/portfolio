@@ -8,6 +8,19 @@ export const siteSettings: SiteSettings = {
   logoText: "DAT.BUILD",
   contactEmail: "contact@datnguyen.dev",
   resumeUrl: "/resume.pdf",
+  contactEyebrow: "// INQUIRIES & COLLABORATION",
+  contactHeading: "SAY HELLO.",
+  contactIntro: "Have a project in mind, an architectural challenge to discuss, or just want to connect? Send a note below.",
+  journeyEyebrow: "// 06. TIMELINE",
+  journeyHeading: "THE JOURNEY SO FAR",
+  journeyIntro: "Proven track record of shipping systems, rigorous research, and active open-source contribution.",
+  journeyChapters: [
+    { type: "Work", title: "WORK EXPERIENCE", subtitle: "Building things that matter.", accent: "lime" },
+    { type: "Education", title: "EDUCATION", subtitle: "Where curiosity meets knowledge.", accent: "sky" },
+    { type: "Research", title: "RESEARCH & INNOVATION", subtitle: "Probing what's next.", accent: "coral" },
+    { type: "Community", title: "COMMUNITY", subtitle: "Giving back to the craft.", accent: "sun" },
+    { type: "Milestone", title: "MILESTONES", subtitle: "Moments that mattered.", accent: "pink" },
+  ],
   socialLinks: [
     {
       platform: "github",

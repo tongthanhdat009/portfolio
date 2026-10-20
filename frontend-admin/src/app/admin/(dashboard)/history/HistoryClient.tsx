@@ -1,31 +1,39 @@
 'use client';
 
 import React, { useState, useTransition } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { History, Undo2, Clock, CheckCircle2, AlertCircle, FileCode } from 'lucide-react';
 import { CmsEntry, CmsRevision } from '@/types';
+import type { PagedResult } from '@/lib/cms/service';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Modal } from '@/components/ui/Modal';
+import { Pagination } from '@/components/ui/Pagination';
 import { restoreRevisionAction } from '@/app/admin/actions';
 
 interface HistoryClientProps {
   entries: CmsEntry[];
-  initialRevisions: CmsRevision[];
+  initialEntryId: string;
+  revisionsBundle: PagedResult<CmsRevision>;
 }
 
 export default function HistoryClient({
   entries,
-  initialRevisions,
+  initialEntryId,
+  revisionsBundle,
 }: HistoryClientProps) {
-  const [selectedEntryId, setSelectedEntryId] = useState<string>(entries[0]?._id || '');
-  const [revisions, setRevisions] = useState(initialRevisions);
+  const [selectedEntryId] = useState<string>(initialEntryId);
+  const revisions = revisionsBundle.items;
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [selectedRev, setSelectedRev] = useState<CmsRevision | null>(null);
   const [statusMsg, setStatusMsg] = useState('');
   const [isPending, startTransition] = useTransition();
 
   const currentEntry = entries.find((e) => e._id === selectedEntryId) || entries[0];
-  const filteredRevisions = revisions.filter((r) => r.entryId === selectedEntryId);
+  const filteredRevisions = revisions;
 
   const handleRestore = (rev: CmsRevision) => {
     startTransition(async () => {
@@ -70,7 +78,13 @@ export default function HistoryClient({
         </label>
         <select
           value={selectedEntryId}
-          onChange={(e) => setSelectedEntryId(e.target.value)}
+          onChange={(e) => {
+            const sp = new URLSearchParams(searchParams.toString());
+            sp.set('entry', e.target.value);
+            sp.delete('revPage');
+            const qs = sp.toString();
+            router.push(qs ? `${pathname}?${qs}` : pathname);
+          }}
           className="w-full max-w-md px-3 py-1.5 text-xs font-mono font-bold bg-stone-50 border-2 border-[var(--color-ink)] rounded-[var(--radius-sm)] cursor-pointer"
         >
           {entries.map((entry) => (
@@ -124,7 +138,7 @@ export default function HistoryClient({
                           {rev.summary}
                         </p>
                         <span className="font-mono text-[10px] text-stone-500">
-                          {new Date(rev.createdAt).toLocaleString()}
+                          {new Date(rev.createdAt).toLocaleString('en-US')}
                         </span>
                       </div>
 
@@ -143,6 +157,13 @@ export default function HistoryClient({
                 })}
               </div>
             )}
+            <Pagination
+              page={revisionsBundle.page}
+              totalPages={revisionsBundle.lastPage}
+              total={revisionsBundle.total}
+              perPage={revisionsBundle.perPage}
+              param="revPage"
+            />
           </Card>
         </div>
 
@@ -158,7 +179,7 @@ export default function HistoryClient({
                   Revision #{selectedRev.revision} ({selectedRev.action})
                 </h3>
                 <span className="font-mono text-xs text-stone-400">
-                  Created at {new Date(selectedRev.createdAt).toLocaleString()}
+                  Created at {new Date(selectedRev.createdAt).toLocaleString('en-US')}
                 </span>
               </div>
 

@@ -8,14 +8,19 @@ import {
   publishEntry,
   unpublishEntry,
   archiveEntry,
+  restoreEntry,
   deleteEntry,
   restoreRevision,
   addMedia,
   deleteMedia,
   updateGlobals,
   getGlobals,
+  getEntryByKey,
 } from '@/lib/cms/service';
 import { CmsEntry, CmsGlobals } from '@/types';
+import { defaultHomeBlocks } from '@/lib/page-blocks';
+import { importCv, CvImportResult } from '@/lib/cv-import';
+import { syncGithubProjects, GithubSyncResult } from '@/lib/github';
 
 async function checkAuth() {
   const authed = await isAuthenticated();
@@ -93,6 +98,36 @@ export async function deleteEntryAction(id: string) {
   return { success: res };
 }
 
+export async function restoreEntryAction(id: string) {
+  await checkAuth();
+  const res = await restoreEntry(id, 'owner');
+  revalidatePath('/admin');
+  revalidatePath('/admin/content');
+  return res;
+}
+
+export async function seedHomeAction() {  await checkAuth();
+  const existing = await getEntryByKey('home');
+  if (existing) return existing;
+  const created = await createEntry(
+    {
+      type: 'page',
+      key: 'home',
+      title: 'Home',
+      locale: 'en',
+      status: 'draft',
+      sortOrder: 0,
+      featured: false,
+      references: [],
+      seo: { title: 'Home' },
+      data: { blocks: defaultHomeBlocks() },
+    },
+    'owner'
+  );
+  revalidatePath('/admin/content/pages/home');
+  return created;
+}
+
 export async function restoreRevisionAction(entryId: string, revisionNumber: number) {
   await checkAuth();
   const res = await restoreRevision(entryId, revisionNumber, 'owner');
@@ -139,4 +174,21 @@ export async function revalidatePublicCacheAction() {
   } catch (err) {
     return { success: false, message: (err as Error).message };
   }
+}
+
+export async function syncGithubAction(): Promise<GithubSyncResult> {
+  await checkAuth();
+  const res = await syncGithubProjects();
+  revalidatePath('/admin');
+  revalidatePath('/admin/content');
+  revalidatePath('/admin/content/projects');
+  return res;
+}
+
+export async function importCvAction(): Promise<CvImportResult> {
+  await checkAuth();
+  const res = await importCv();
+  revalidatePath('/admin');
+  revalidatePath('/admin/content');
+  return res;
 }

@@ -38,20 +38,45 @@ function blockProps(blocks: any[] | undefined, type: string): Record<string, any
   return blocks?.find((b) => b.type === type && b.enabled !== false)?.props ?? {};
 }
 
+export interface SectionHeader {
+  eyebrow: string;
+  headline: string;
+}
+
+const defaultLabHeader: SectionHeader = {
+  eyebrow: '// 07. EXPERIMENTS',
+  headline: 'THE DIGITAL LAB',
+};
+
+const defaultNotesHeader: SectionHeader = {
+  eyebrow: '// 08. FIELD LOGS',
+  headline: 'NOTES FROM THE BUILD',
+};
+
 export async function getHomePageData(): Promise<{
   hero: HeroData;
   marquee: string[];
   manifesto: ManifestoData;
+  lab: SectionHeader;
+  notes: SectionHeader;
 }> {
   const page = await fetchPublicationOne('page', 'home');
   const blocks = page?.data?.blocks;
   if (!blocks) {
-    return { hero: heroData, marquee: marqueeKeywords, manifesto: manifestoData };
+    return {
+      hero: heroData,
+      marquee: marqueeKeywords,
+      manifesto: manifestoData,
+      lab: defaultLabHeader,
+      notes: defaultNotesHeader,
+    };
   }
 
   const hero = blockProps(blocks, 'hero_poster');
   const marquee = blockProps(blocks, 'marquee');
   const manifesto = blockProps(blocks, 'about_manifesto');
+  const lab = blockProps(blocks, 'experiment_grid');
+  const notes = blockProps(blocks, 'notes_grid');
 
   return {
     hero: {
@@ -75,6 +100,14 @@ export async function getHomePageData(): Promise<{
       ctaText: manifesto.ctaText ?? manifestoData.ctaText,
       ctaHref: manifesto.ctaHref ?? manifestoData.ctaHref,
     },
+    lab: {
+      eyebrow: lab.eyebrow ?? defaultLabHeader.eyebrow,
+      headline: lab.headline ?? defaultLabHeader.headline,
+    },
+    notes: {
+      eyebrow: notes.eyebrow ?? defaultNotesHeader.eyebrow,
+      headline: notes.headline ?? defaultNotesHeader.headline,
+    },
   };
 }
 
@@ -94,7 +127,7 @@ function toCapability(p: ApiPublication, index: number): CapabilityItem {
 
 export async function getCapabilities(): Promise<CapabilityItem[]> {
   const list = await fetchPublicationList('capability');
-  if (!list) return [...capabilitiesData].sort((a, b) => a.order - b.order);
+  if (!list?.length) return [...capabilitiesData].sort((a, b) => a.order - b.order);
   return list.map(toCapability).sort((a, b) => a.order - b.order);
 }
 
@@ -135,7 +168,7 @@ export async function getProjects(filter?: {
   featured?: boolean;
 }): Promise<Project[]> {
   const list = await fetchPublicationList('project');
-  let projects = list
+  let projects = list?.length
     ? list.map(toProject)
     : [...projectsData];
   if (filter?.category && filter.category !== 'All') {
@@ -167,7 +200,7 @@ function toTechnology(p: ApiPublication, index: number): Technology {
 
 export async function getTechnologies(category?: TechCategory | 'All'): Promise<Technology[]> {
   const list = await fetchPublicationList('skill');
-  let technologies = list ? list.map(toTechnology) : [...technologiesData];
+  let technologies = list?.length ? list.map(toTechnology) : [...technologiesData];
   if (category && category !== 'All') {
     technologies = technologies.filter((t) => t.category === category);
   }
@@ -192,7 +225,7 @@ function toExperience(p: ApiPublication, index: number): ExperienceItem {
 
 export async function getExperience(): Promise<ExperienceItem[]> {
   const list = await fetchPublicationList('experience');
-  if (!list) return [...experienceData];
+  if (!list?.length) return [...experienceData];
   return list.map(toExperience);
 }
 
@@ -218,7 +251,7 @@ function toExperiment(p: ApiPublication): Experiment {
 
 export async function getExperiments(status?: string): Promise<Experiment[]> {
   const list = await fetchPublicationList('experiment');
-  let experiments = list ? list.map(toExperiment) : [...experimentsData];
+  let experiments = list?.length ? list.map(toExperiment) : [...experimentsData];
   if (status && status !== 'All') {
     experiments = experiments.filter((e) => e.status.toLowerCase() === status.toLowerCase());
   }
@@ -252,7 +285,7 @@ function toNote(p: ApiPublication): Note {
 
 export async function getNotes(category?: string): Promise<Note[]> {
   const list = await fetchPublicationList('note');
-  let notes = list ? list.map(toNote) : [...notesData];
+  let notes = list?.length ? list.map(toNote) : [...notesData];
   if (category && category !== 'All') {
     notes = notes.filter((n) => n.category.toLowerCase() === category.toLowerCase());
   }

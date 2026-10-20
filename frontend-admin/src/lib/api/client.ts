@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 
-const API_BASE = process.env.API_BASE_URL || 'http://localhost:8000';
+const API_BASE = process.env.API_BASE_URL || 'http://localhost:9000';
 const TOKEN_COOKIE = 'admin_api_token';
 
 export class ApiError extends Error {
@@ -24,6 +24,11 @@ interface FetchOptions {
   body?: unknown;
   query?: Record<string, string | number | undefined>;
   token?: string | null;
+  /**
+   * Return the raw response payload instead of unwrapping the `{ data }`
+   * envelope. Needed for paginated endpoints where `meta` must be kept.
+   */
+  raw?: boolean;
 }
 
 export async function apiFetch<T>(path: string, opts: FetchOptions = {}): Promise<T> {
@@ -64,6 +69,7 @@ export async function apiFetch<T>(path: string, opts: FetchOptions = {}): Promis
     throw new ApiError(res.status, message, payload?.errorCode);
   }
 
+  if (opts.raw) return payload as T;
   return (payload?.data !== undefined ? payload.data : payload) as T;
 }
 

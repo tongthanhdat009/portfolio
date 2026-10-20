@@ -364,6 +364,7 @@ export default function ProjectEditorClient({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <Input
                 label="Project Title"
+                maxLength={80}
                 value={title}
                 onChange={(e) => {
                   setTitle(e.target.value);
@@ -375,6 +376,7 @@ export default function ProjectEditorClient({
 
               <Input
                 label="Public URL Slug"
+                maxLength={80}
                 value={slug}
                 onChange={(e) => {
                   setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'));
@@ -389,6 +391,7 @@ export default function ProjectEditorClient({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <Input
                 label="Year"
+                maxLength={12}
                 value={year}
                 onChange={(e) => {
                   setYear(e.target.value);
@@ -399,6 +402,7 @@ export default function ProjectEditorClient({
 
               <Input
                 label="Card Index No."
+                maxLength={4}
                 value={indexNum}
                 onChange={(e) => {
                   setIndexNum(e.target.value);
@@ -459,6 +463,7 @@ export default function ProjectEditorClient({
 
             <Textarea
               label="Short Elevator Summary"
+                maxLength={300}
               value={summary}
               onChange={(e) => {
                 setSummary(e.target.value);
@@ -466,10 +471,12 @@ export default function ProjectEditorClient({
               }}
               rows={3}
               placeholder="1-2 sentences summarizing problem solved and high-level architectural value."
+              helperText="Cards show ~2 lines — keep under 300 characters."
             />
 
             <Input
               label="Technology Tags (comma separated)"
+                maxLength={300}
               value={tagsInput}
               onChange={(e) => {
                 setTagsInput(e.target.value);
@@ -486,6 +493,7 @@ export default function ProjectEditorClient({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Input
                 label="Target Users"
+                maxLength={120}
                 value={targetUsers}
                 onChange={(e) => {
                   setTargetUsers(e.target.value);
@@ -495,6 +503,7 @@ export default function ProjectEditorClient({
               />
               <Input
                 label="Timeline / Duration"
+                maxLength={60}
                 value={timeline}
                 onChange={(e) => {
                   setTimeline(e.target.value);
@@ -504,6 +513,7 @@ export default function ProjectEditorClient({
               />
               <Input
                 label="Your Actual Role in Project"
+                maxLength={120}
                 value={role}
                 onChange={(e) => {
                   setRole(e.target.value);
@@ -515,6 +525,7 @@ export default function ProjectEditorClient({
 
             <Textarea
               label="The Core Problem & Context"
+                maxLength={500}
               value={problem}
               onChange={(e) => {
                 setProblem(e.target.value);
@@ -552,6 +563,7 @@ export default function ProjectEditorClient({
                       markDirty();
                     }}
                     placeholder={`Contribution item ${i + 1}`}
+                    maxLength={220}
                   />
                   <button
                     onClick={() => {
@@ -568,6 +580,7 @@ export default function ProjectEditorClient({
 
             <Textarea
               label="Approach & Technical Design Summary"
+                maxLength={800}
               value={approachSummary}
               onChange={(e) => {
                 setApproachSummary(e.target.value);
@@ -605,6 +618,7 @@ export default function ProjectEditorClient({
                       markDirty();
                     }}
                     placeholder="e.g. 120,000 events/sec sustained load in production"
+                    maxLength={220}
                   />
                   <button
                     onClick={() => {
@@ -648,6 +662,7 @@ export default function ProjectEditorClient({
                         markDirty();
                       }}
                       placeholder="Outcome point"
+                      maxLength={220}
                     />
                     <button
                       onClick={() => setOutcomes(outcomes.filter((_, idx) => idx !== i))}
@@ -686,6 +701,7 @@ export default function ProjectEditorClient({
                         markDirty();
                       }}
                       placeholder="Lesson learned"
+                      maxLength={220}
                     />
                     <button
                       onClick={() => setLessons(lessons.filter((_, idx) => idx !== i))}
@@ -705,6 +721,7 @@ export default function ProjectEditorClient({
           <div className="space-y-6">
             <Input
               label="Cover Image URL / Path"
+                maxLength={2048}
               value={coverImage}
               onChange={(e) => {
                 setCoverImage(e.target.value);
@@ -716,6 +733,7 @@ export default function ProjectEditorClient({
 
             <Input
               label="Cover Image Alt Description (Mandatory for accessibility)"
+                maxLength={125}
               value={coverAlt}
               onChange={(e) => {
                 setCoverAlt(e.target.value);
@@ -750,6 +768,7 @@ export default function ProjectEditorClient({
           <div className="space-y-5">
             <Input
               label="Live Production / Demo URL"
+                maxLength={2048}
               value={demoUrl}
               onChange={(e) => {
                 setDemoUrl(e.target.value);
@@ -760,6 +779,7 @@ export default function ProjectEditorClient({
 
             <Input
               label="Source Code Repository URL"
+                maxLength={2048}
               value={repoUrl}
               onChange={(e) => {
                 setRepoUrl(e.target.value);
@@ -775,6 +795,7 @@ export default function ProjectEditorClient({
           <div className="space-y-5">
             <Input
               label="SEO Title Override"
+                maxLength={60}
               value={seoTitle}
               onChange={(e) => {
                 setSeoTitle(e.target.value);
@@ -786,6 +807,7 @@ export default function ProjectEditorClient({
 
             <Textarea
               label="SEO Meta Description"
+                maxLength={160}
               value={seoDescription}
               onChange={(e) => {
                 setSeoDescription(e.target.value);

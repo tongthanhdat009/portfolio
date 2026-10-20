@@ -44,14 +44,25 @@ function toEntry(r: any): CmsEntry {
   };
 }
 
-function toApiPayload(entry: Partial<CmsEntry>): Record<string, any> {
-  const { _id, id, createdAt, updatedAt, revision, hasUnpublishedChanges, publishedAt, lastPublishedRevision, archivedAt, createdBy, updatedBy, ...rest } = entry as any;
+function toApiPayload(entry: Partial<CmsEntry>): Record<string, any> {  const { _id, id, createdAt, updatedAt, revision, hasUnpublishedChanges, publishedAt, lastPublishedRevision, archivedAt, createdBy, updatedBy, ...rest } = entry as any;
   const payload: Record<string, any> = { ...rest };
   if (payload.seo) {
     const { ogImage, ...seoRest } = payload.seo;
     payload.seo = { ...seoRest, ...(ogImage ? { ogMediaId: ogImage } : {}) };
   }
   return payload;
+}
+
+/**
+ * apiFetch already unwraps the `{ data }` envelope, so list endpoints resolve
+ * to a bare array. Accept both shapes defensively.
+ */
+function asList<T>(res: unknown): T[] {
+  if (Array.isArray(res)) return res as T[];
+  if (res && typeof res === 'object' && Array.isArray((res as { data?: unknown }).data)) {
+    return (res as { data: T[] }).data;
+  }
+  return [];
 }
 
 export async function getEntries(filter?: {
@@ -67,7 +78,7 @@ export async function getEntries(filter?: {
   if (filter?.search) query.q = filter.search;
 
   const res = await apiFetch<{ data: any[] }>('/admin/entries', { query });
-  let items = (res.data ?? []).map(toEntry);
+  let items = asList<any>(res).map(toEntry);
 
   if (filter?.category && filter.category !== 'all') {
     items = items.filter((i) => i.data?.category === filter.category);
@@ -82,6 +93,64 @@ export async function getEntries(filter?: {
   }
 
   return items;
+}
+
+export interface PagedResult<T> {
+  items: T[];
+  total: number;
+  page: number;
+  perPage: number;
+  lastPage: number;
+}
+
+const DEFAULT_PER_PAGE = 10;
+
+function toPaged<T>(
+  envelope: { data?: any[]; meta?: { current_page?: number; per_page?: number; total?: number; last_page?: number } } | null | undefined,
+  map: (r: any) => T,
+  fallbackPerPage: number
+): PagedResult<T> {
+  const list = Array.isArray(envelope?.data) ? envelope.data : [];
+  const meta = envelope?.meta ?? {};
+  const total = meta.total ?? list.length;
+  const perPage = meta.per_page ?? fallbackPerPage;
+  const page = meta.current_page ?? 1;
+  return {
+    items: list.map(map),
+    total,
+    page,
+    perPage,
+    lastPage: meta.last_page ?? Math.max(1, Math.ceil(total / perPage)),
+  };
+}
+
+export async function getEntriesPaged(filter?: {
+  type?: ContentType;
+  status?: EntryStatus | 'all' | EntryStatus[];
+  search?: string;
+  category?: string;
+  sort?: 'updated' | 'order';
+  page?: number;
+  perPage?: number;
+}): Promise<PagedResult<CmsEntry>> {
+  const perPage = filter?.perPage ?? DEFAULT_PER_PAGE;
+  const query: Record<string, string | number | undefined> = {
+    limit: perPage,
+    page: filter?.page ?? 1,
+  };
+  if (filter?.type) query.type = filter.type;
+  if (Array.isArray(filter?.status)) {
+    filter.status.forEach((s, i) => {
+      query[`status[${i}]`] = s;
+    });
+  } else if (filter?.status && filter.status !== 'all') {
+    query.status = filter.status;
+  }
+  if (filter?.search) query.q = filter.search;
+  if (filter?.category && filter.category !== 'all') query.category = filter.category;
+  if (filter?.sort) query.sort = filter.sort;
+  const envelope = await apiFetch<{ data: any[]; meta: any }>('/admin/entries', { query, raw: true });
+  return toPaged(envelope, toEntry, perPage);
 }
 
 export async function getEntryById(id: string): Promise<CmsEntry | null> {
@@ -102,7 +171,7 @@ export async function getEntryByKey(key: string): Promise<CmsEntry | null> {
       return toEntry(data);
     }
     const res = await apiFetch<{ data: any[] }>('/admin/entries', { query: { limit: 100 } });
-    const found = (res.data ?? []).find((r: any) => r.key === key);
+    const found = asList<any>(res).find((r: any) => r.key === key);
     return found ? toEntry(found) : null;
   } catch (e: any) {
     if (e?.status === 404) return null;
@@ -196,18 +265,26 @@ export async function archiveEntry(
   return toEntry(data);
 }
 
+export async function restoreEntry(
+  id: string,
+  actor: string = 'owner'
+): Promise<CmsEntry> {
+  void actor;
+  const data = await apiFetch<any>(`/admin/entries/${id}/restore`, { method: 'POST', body: {} });
+  return toEntry(data);
+}
+
 export async function deleteEntry(id: string, actor: string = 'owner'): Promise<boolean> {
   await archiveEntry(id, actor);
   return true;
 }
 
-function toRevision(entryId: string, r: any, all: any[]): CmsRevision {
-  const minRev = Math.min(...all.map((x: any) => x.revision ?? 1));
+function toRevision(entryId: string, r: any): CmsRevision {
   return {
     _id: `rev_${entryId}_${r.revision}`,
     entryId,
     revision: r.revision,
-    action: r.revision === minRev ? 'created' : 'saved',
+    action: r.revision === 1 ? 'created' : 'saved',
     actor: r.actorId ?? '',
     summary: r.changeSummary ?? '',
     snapshot: undefined,
@@ -219,8 +296,20 @@ export async function getRevisions(entryId: string): Promise<CmsRevision[]> {
   const res = await apiFetch<{ data: any[] }>(`/admin/entries/${entryId}/revisions`, {
     query: { limit: 50 },
   });
-  const items = res.data ?? [];
-  return items.map((r: any) => toRevision(entryId, r, items));
+  const items = asList<any>(res);
+  return items.map((r: any) => toRevision(entryId, r));
+}
+
+export async function getRevisionsPaged(
+  entryId: string,
+  opts?: { page?: number; perPage?: number }
+): Promise<PagedResult<CmsRevision>> {
+  const perPage = opts?.perPage ?? DEFAULT_PER_PAGE;
+  const envelope = await apiFetch<{ data: any[]; meta: any }>(`/admin/entries/${entryId}/revisions`, {
+    query: { limit: perPage, page: opts?.page ?? 1 },
+    raw: true,
+  });
+  return toPaged(envelope, (r: any) => toRevision(entryId, r), perPage);
 }
 
 export async function restoreRevision(
@@ -257,8 +346,27 @@ export async function getMedia(filter?: { search?: string; type?: string }): Pro
   if (filter?.search) query.q = filter.search;
   if (filter?.type && filter.type !== 'all') query.mimeType = filter.type;
   const res = await apiFetch<{ data: any[] }>('/admin/media', { query });
-  return (res.data ?? []).map((r: any) =>
+  return asList<any>(res).map((r: any) =>
     toMediaAsset({ ...r.asset, url: r.url ?? r.asset?.url })
+  );
+}
+
+export async function getMediaPaged(filter?: {
+  search?: string;
+  page?: number;
+  perPage?: number;
+}): Promise<PagedResult<MediaAsset>> {
+  const perPage = filter?.perPage ?? DEFAULT_PER_PAGE;
+  const query: Record<string, string | number | undefined> = {
+    limit: perPage,
+    page: filter?.page ?? 1,
+  };
+  if (filter?.search) query.q = filter.search;
+  const envelope = await apiFetch<{ data: any[]; meta: any }>('/admin/media', { query, raw: true });
+  return toPaged(
+    envelope,
+    (r: any) => toMediaAsset({ ...r.asset, url: r.url ?? r.asset?.url }),
+    perPage
   );
 }
 
@@ -353,6 +461,8 @@ export async function getGlobals(): Promise<CmsGlobals> {
   let site: any = {};
   try {
     const data = await apiFetch<any>(`/admin/globals/${SITE_KEY}`);
+    // apiFetch unwraps the {data} envelope; the resource nests the payload
+    // one more level under `data`.
     site = data?.data ?? {};
   } catch (e: any) {
     if (e?.status !== 404) throw e;
@@ -361,7 +471,7 @@ export async function getGlobals(): Promise<CmsGlobals> {
   let redirects: RedirectRule[] = [];
   try {
     const res = await apiFetch<{ data: any[] }>('/admin/redirects', { query: { limit: 100 } });
-    redirects = (res.data ?? []).map((r: any) => ({
+    redirects = asList<any>(res).map((r: any) => ({
       id: String(r.id),
       source: r.fromPath,
       destination: r.toPath,
@@ -391,8 +501,10 @@ export async function updateGlobals(
   let revision = 0;
   try {
     const current = await apiFetch<any>(`/admin/globals/${SITE_KEY}`);
+    // `current` is the resource; the editable payload lives under `data`.
+    const currentData = current?.data ?? {};
     revision = current?.revision ?? 0;
-    const merged = { ...(current?.data ?? {}), ...siteUpdates };
+    const merged = { ...currentData, ...siteUpdates };
     await apiFetch<any>(`/admin/globals/${SITE_KEY}`, {
       method: 'PATCH',
       body: { data: merged, expectedRevision: revision },
@@ -408,9 +520,17 @@ export async function updateGlobals(
     }
   }
 
+  // Publish the globals snapshot so the public site picks up the change.
+  // Settings edits are low-risk and the UI offers no separate publish step.
+  const fresh = await apiFetch<any>(`/admin/globals/${SITE_KEY}`);
+  await apiFetch<any>(`/admin/globals/${SITE_KEY}/publish`, {
+    method: 'POST',
+    body: { expectedRevision: fresh?.revision ?? 0 },
+  });
+
   if (redirects) {
     const existing = await apiFetch<{ data: any[] }>('/admin/redirects', { query: { limit: 100 } });
-    const existingList: any[] = existing.data ?? [];
+    const existingList: any[] = asList<any>(existing);
     const wanted = new Map(redirects.map((r) => [r.source, r.destination]));
 
     for (const cur of existingList) {
@@ -500,7 +620,7 @@ export async function getDashboardMetrics() {
   const recentChangesCount = allEntries.filter((e: CmsEntry) => e.updatedAt >= oneWeekAgo).length;
 
   const health = await getContentHealth();
-  const warningsCount = health.filter((h) => h.level === 'warning' || h.level === 'blocker').length;
+  const warningsCount = health.length;
 
   return {
     publishedCount,
@@ -528,7 +648,7 @@ const AUDIT_ACTION_MAP: Record<string, AuditLog['action']> = {
 
 export async function getAuditLogs(limit: number = 20): Promise<AuditLog[]> {
   const res = await apiFetch<{ data: any[] }>('/admin/audit-logs', { query: { limit } });
-  return (res.data ?? []).map((r: any) => ({
+  return asList<any>(res).map((r: any) => ({
     _id: String(r.id),
     actor: r.actorId ?? '',
     action: AUDIT_ACTION_MAP[r.event] ?? 'update',

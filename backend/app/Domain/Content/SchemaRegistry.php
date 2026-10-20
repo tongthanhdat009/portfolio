@@ -52,6 +52,23 @@ class SchemaRegistry
                 'data.links.*.url' => ['required_with:data.links', 'string', 'max:2048'],
                 'data.techStack' => ['nullable', 'array', 'max:30'],
                 'data.techStack.*' => ['string', 'max:60'],
+                // Admin project editor + GitHub sync payload (spec: editor owns
+                // these keys; parent `array` rules pass each subtree through).
+                'data.title' => ['nullable', 'string', 'max:255'],
+                'data.slug' => ['nullable', 'string', 'max:180'],
+                'data.year' => ['nullable', 'string', 'max:12'],
+                'data.index' => ['nullable', 'string', 'max:12'],
+                'data.category' => ['nullable', 'string', 'max:60'],
+                'data.accent' => ['nullable', 'string', 'max:20'],
+                'data.tags' => ['nullable', 'array', 'max:30'],
+                'data.tags.*' => ['string', 'max:60'],
+                'data.status' => ['nullable', 'string', 'max:30'],
+                'data.featured' => ['nullable', 'boolean'],
+                'data.demoUrl' => ['nullable', 'string', 'max:2048'],
+                'data.repoUrl' => ['nullable', 'string', 'max:2048'],
+                'data.coverImage' => ['nullable', 'string', 'max:2048'],
+                'data.coverAlt' => ['nullable', 'string', 'max:255'],
+                'data.caseStudy' => ['nullable', 'array'],
             ],
             'page' => [
                 'data.blocks' => ['present', 'array', 'max:40'],
