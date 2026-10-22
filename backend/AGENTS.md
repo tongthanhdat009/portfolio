@@ -47,43 +47,74 @@ Boost replaces these bootstrap instructions with guidelines tailored to the appl
 </laravel-boost-guidelines>
 
 <!-- Parent: ../AGENTS.md -->
-<!-- Generated: 2026-10-18 -->
-# backend (Laravel CMS API)
+<!-- Generated: 2026-10-18 | Updated: 2026-10-22 -->
+
+# backend
 
 ## Purpose
-JSON-only headless CMS API over MongoDB (`mongodb/laravel-mongodb`) with S3 media (Moto mock locally) and Sanctum auth. Drafts live in `cms_entries`; public delivery reads `cms_publications` snapshots; publish fans out via outbox → HMAC-signed Next.js revalidation.
+JSON-only headless CMS API over MongoDB (`mongodb/laravel-mongodb`) with S3-compatible object storage for media and Laravel Sanctum for admin auth. Drafts live in `cms_entries`; public delivery reads immutable `cms_publications` snapshots only; publishing fans out through a `cms_outbox` to an HMAC-signed Next.js revalidation endpoint.
 
 ## Key Files
-| File | Role |
-|------|------|
-| `routes/api.php` | v1 contract: `auth/*`, `admin/*` (Sanctum), `public/*` |
-| `config/cms.php` | Locales, upload limits, media prefixes, revalidate URL/secret |
-| `composer.json` | PHP deps incl. `mongodb/laravel-mongodb`, Sanctum |
-| `phpunit.xml` | Test suites; run via `make test` (docker) |
-| `Dockerfile` | Backend image (MongoDB + Moto S3 expected alongside) |
+| File | Description |
+|------|-------------|
+| `routes/api.php` | v1 HTTP contract: `auth/*`, `admin/*` (behind `auth:sanctum`), `public/*` |
+| `routes/console.php` | Scheduler: `cms:process-outbox --limit=50` every minute, `CleanupOrphanUploads` weekly |
+| `config/cms.php` | CMS runtime settings: locales, upload limits, media prefixes, revalidate URL/secret/timeout |
+| `composer.json` | PHP deps: `laravel/framework` ^13.17, `mongodb/laravel-mongodb` ^5.11, `laravel/sanctum` ^4.3, `league/flysystem-aws-s3-v3` |
+| `phpunit.xml` | PHPUnit 12 config; `Unit` and `Feature` suites over `tests/` |
+| `Dockerfile` | Backend image; the API runs in Docker because the host lacks `ext-mongodb` |
+| `.env.example` | Template for `DB_*`, `MONGODB_*`, `AWS_*`, `SANCTUM_*`, `CMS_*`, `NEXT_REVALIDATE_*` |
+| `README.md` | Local run, test, and outbox-worker instructions (Vietnamese) |
+| `CLAUDE.md` | Laravel Boost bootstrap block for this directory |
 
 ## Subdirectories
-| Dir | Notes |
-|-----|-------|
-| `app/AGENTS.md` | Controllers, services, models, jobs, policies, providers |
-| `bootstrap/AGENTS.md` | App wiring, Sanctum middleware, JSON exceptions |
-| `config/AGENTS.md` | Env-driven settings, `cms.php` reference |
-| `database/AGENTS.md` | Relational scaffolding; CMS data is MongoDB |
-| `routes/AGENTS.md` | API contract, scheduler |
-| `resources/AGENTS.md` | Stock scaffold only, no CMS UI |
-| `tests/AGENTS.md` | Docker-backed Feature acceptance |
-
-Skipped: `vendor/`, `storage/`, `node_modules/`, `public/build`, `bootstrap/cache/` (generated/dependencies).
+| Directory | Purpose |
+|-----------|---------|
+| `app/` | Application code: services, models, controllers, jobs, policies, providers (see `app/AGENTS.md`) |
+| `bootstrap/` | App wiring, Sanctum stateful middleware, JSON exception rendering (see `bootstrap/AGENTS.md`) |
+| `config/` | Environment-driven settings, including `cms.php` (see `config/AGENTS.md`) |
+| `database/` | Stock relational scaffolding; all CMS data lives in MongoDB (see `database/AGENTS.md`) |
+| `routes/` | API contract and scheduler (see `routes/AGENTS.md`) |
+| `resources/` | Stock Laravel scaffold only — no CMS UI lives here (see `resources/AGENTS.md`) |
+| `tests/` | Feature acceptance tests (see `tests/AGENTS.md`) |
+| `vendor/` | Composer dependencies — never edit or document |
+| `storage/` | Framework-generated runtime state — never edit or document |
 
 ## For AI Agents
-- Spec source of truth: repo-root `*.md` (sections cited in code as `spec X.Y`).
-- Test via `make test` from repo root (docker). Bare-host artisan test fails (no MongoDB/S3 mock).
-- Conventions: FormRequest validates → controller authorizes → service mutates → Resource renders; `readonly` promoted DI; `spec` refs in docblocks; `XxxService`/`*Test.php` naming.
-- Gates in `AppServiceProvider`, matrix in `EntryPolicy`; public routes never touch drafts.
-- BSON arrays: no `'array'` casts on document models.
+
+### Working In This Directory
+- The API must run in Docker. The host PHP lacks the MongoDB extension, so `php artisan serve` on the host is not a valid path; use `docker compose exec backend php artisan ...` from the repo root (service name `backend` in the root `compose.yaml`).
+- `mongodb/laravel-mongodb` v5 reads the collection name from `$table`, not `$collection`. Every CMS model sets `protected $table`.
+- The database is MongoDB, not MySQL. The stock `database/migrations` and `seeders` are Laravel skeleton leftovers; the CMS is schema-less and index-managed by `php artisan cms:bootstrap-indexes`.
+- The spec of record is the repo-root `laravel-mongodb-s3-portfolio-cms-backend-architecture.md`; code docblocks cite it as `spec <section>`.
+- Never commit `backend/.env`, `APP_KEY`, AWS keys, the MongoDB URI with credentials, or `NEXT_REVALIDATE_SECRET`.
+
+### Testing Requirements
+- Run the suite from the repo root: `docker compose exec backend php artisan test`.
+- Or from inside `backend/`: `composer test` (runs `php artisan config:clear` then `php artisan test`).
+- Bare-host `php artisan test` fails — the host has no `ext-mongodb` and cannot talk to MongoDB.
+- Baseline is 27 tests: Auth (8), Entries/publish (9), Pages+Globals (3), Media (5), skeleton (2).
+- Feature tests need MongoDB and clean the CMS collections in `tearDown()`; do not assume an empty database.
+
+### Common Patterns
+- Layering: FormRequest validates → controller authorizes → service mutates → API Resource renders. Keep each layer in its lane.
+- Constructor property promotion with `readonly` for injected services (`private readonly ContentService $content`); explicit strict return types (`JsonResponse`, `void`).
+- Naming: `XxxService` in `app/Application/Services`, `*Test.php` under `tests/`.
+- Spec references live in docblocks (`spec 8.2`) — preserve them when touching lifecycle code.
+- Authorization gates are defined in `AppServiceProvider`; the permission matrix lives in `EntryPolicy`. Public routes never touch drafts.
 
 ## Dependencies
-- Internal: `../frontend/` (Next.js consumer via revalidate + public API), repo-root specs.
-- External: MongoDB, S3 (Moto locally), Redis queue (or `sync`), Sanctum SPA frontend.
+
+### Internal
+- `../frontend/` — Next.js public site, consumes `v1/public/*` and hosts the revalidation endpoint.
+- `../frontend-admin/` — Next.js admin dashboard, consumes `v1/admin/*` via Sanctum.
+- `../compose.yaml` — `mongo` (27017), `backend` (9000), `s3` Moto mock (5000).
+- Repo-root `laravel-mongodb-s3-portfolio-cms-backend-architecture.md` — the spec.
+
+### External
+- MongoDB 7 via `mongodb/laravel-mongodb` — the only store for CMS data.
+- S3-compatible object storage via `league/flysystem-aws-s3-v3`; locally the Moto server container.
+- Laravel Sanctum for SPA session/token auth.
+- Laravel queue (`sync` locally, Redis in production) for outbox delivery and cleanup jobs.
 
 <!-- MANUAL: -->

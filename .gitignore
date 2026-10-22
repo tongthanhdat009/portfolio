@@ -39,3 +39,12 @@ next-env.d.ts
 .omc
 .omo
 .codegraph
+.freebuff
+.playwright-mcp
+
+# Local dev runtime artifacts
+.make-dev-*.log
+.make-dev-*.pid
+
+# pnpm workspace — npm lockfile is not used
+package-lock.json
